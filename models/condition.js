@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const conditionSchema = new mongoose.Schema({
   name: {
     type: String,
+    enum: ["New", "Like-new", "Good", "Poor"],
     required: true,
   },
   enabled: {

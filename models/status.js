@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const statusSchema = new mongoose.Schema({
   name: {
     type: String,
+    enum: ["Available", "Reserved", "Unavailable"],
     required: true,
   },
   enabled: {

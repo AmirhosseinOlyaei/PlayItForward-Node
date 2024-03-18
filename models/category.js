@@ -3,6 +3,18 @@ const mongoose = require("mongoose");
 const categorySchema = new mongoose.Schema({
   name: {
     type: String,
+    enum: [
+      "Cars",
+      "Dolls",
+      "Plush",
+      "Playsets",
+      "Sports Toys",
+      "Art & Craft",
+      "Games & Puzzles",
+      "Books",
+      "Musical instruments",
+      "Miscellaneous",
+    ],
     required: true,
   },
   enabled: {
