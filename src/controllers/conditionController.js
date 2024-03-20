@@ -1,4 +1,4 @@
-const Condition = require("../models/condition");
+const Condition = require("../../models/Condition");
 
 const getCondition = async (req, res) => {
   try {

@@ -1,4 +1,4 @@
-const Delivery_method = require("../models/delivery_method");
+const Delivery_method = require("../../models/Delivery_method");
 
 const getDelivery_method = async (req, res) => {
   try {
