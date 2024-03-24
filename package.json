@@ -4,7 +4,7 @@
   "description": "Back-End Repo for Team 1 of Baboon/Bald Eagle Practicum",
   "main": "app.js",
   "scripts": {
-    "start": "node src/app.js"
+    "dev": "nodemon src/server.js"
   },
   "author": "",
   "license": "ISC",
