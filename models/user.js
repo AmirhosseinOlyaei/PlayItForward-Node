@@ -1,42 +1,50 @@
-const mongoose = require("mongoose");
+/*
+User:
+    email
+    first_name
+    last_name
+    profile_picture
+    nickname
+    zipcode
+    created_by_id
+    create_date
+    modified_date
+    modified_by_id
+Route:
+    CREATE
+    UPDATE
+    GET: ability to pass filter
+*/
 
-const userSchema = new mongoose.Schema({
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
+
+const userSchema = new Schema({
   email: {
     type: String,
-    required: true,
-    match: [
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-      "Please valid email",
-    ],
+    required: [true, "Email is required"],
     unique: true,
-  },
-  password: {
-    type: String,
-    required: true,
   },
   first_name: {
     type: String,
-    required: true,
+    required: [true, "First name is required"],
   },
   last_name: {
     type: String,
-    required: true,
+    required: [true, "Last name is required"],
   },
-  profile_picture: {
-    type: String,
-    required: true,
-  },
+  // profile_picture: {
+  //   type: String,
+  //   required: [true, "Profile picture is required"],
+  // },
   nickname: {
     type: String,
-    required: true,
+    required: [true, "Nickname is required"],
+    unique: true,
   },
-  zipcode: {
+  zipCode: {
     type: String,
-    required: true,
-  },
-  created_by_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    required: [true, "Zipcode is required"],
   },
   created_date: {
     type: Date,
@@ -46,10 +54,6 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  modified_by_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-  },
 });
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model("User", userSchema); // creates User model
