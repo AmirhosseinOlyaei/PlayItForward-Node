@@ -1,6 +1,6 @@
 /*
-Condition: (…)
-    condition_id
+Delivery Method: (…)
+    delivery_method_id
     name
     enabled
     sort_order

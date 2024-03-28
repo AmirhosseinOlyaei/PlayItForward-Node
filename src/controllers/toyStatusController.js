@@ -1,4 +1,4 @@
-const Status = require("../../models/Status");
+const Status = require("../../models/ToyStatus.js");
 
 const getStatus = async (req, res) => {
   try {

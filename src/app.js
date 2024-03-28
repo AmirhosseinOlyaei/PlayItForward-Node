@@ -1,10 +1,22 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const cors = require("cors");
 const favicon = require("express-favicon");
 const logger = require("morgan");
+const session = require("express-session");
+const MongoDBStore = require("connect-mongodb-session")(session);
 
-const mainRouter = require("./routes/mainRouter.js");
+const connectDB = require("./db/connect");
+
+// importing routers
+const mainRouter = require("./routes/mainRouter.js"); // imports mainRouter
+const userRouter = require("./routes/userRouter.js"); // imports userRouter
+const toyListingRouter = require("./routes/toyListingRouter.js"); // imports toyListingRouter
+const starSystemRouter = require("./routes/starSystemRouter.js"); // imports starSystemRouter
+const requestToyRouter = require("./routes/requestToyRouter.js"); // imports requestToyRouter
+const messageRouter = require("./routes/messageRouter.js"); // imports messageRouter
+const favoriteToyRouter = require("./routes/favoriteToyRouter.js"); // imports favoriteToyRouter
 
 // middleware
 app.use(cors());
@@ -16,11 +28,24 @@ app.use(favicon(__dirname + "/public/favicon.ico"));
 
 // routes
 app.use("/api/v1", mainRouter);
+app.use("/api/v1/users", userRouter);
+app.use("/api/v1/toys", toyListingRouter);
+app.use("/api/v1/stars", starSystemRouter);
+app.use("/api/v1/requests", requestToyRouter);
+app.use("/api/v1/messages", messageRouter);
+app.use("/api/v1/favorites", favoriteToyRouter);
 
 module.exports = app;
 
-// Express setup
-const session = require("express-session");
+// connect to db
+const url = process.env.MONGO_URI;
+const store = new MongoDBStore({
+  uri: url,
+  collection: "mySessions",
+});
+store.on("error", function (error) {
+  console.log(error);
+});
 
 app.set("view engine", "ejs");
 
@@ -32,12 +57,25 @@ app.use(
   })
 );
 
+//server setup
+const port = process.env.PORT || 8000;
+
+const start = async () => {
+  try {
+    await connectDB(process.env.MONGO_URI);
+    app.listen(port, () =>
+      console.log(`Server is listening on port ${port}...`)
+    );
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+start();
+
 app.get("/", function (req, res) {
   res.render("pages/auth");
 });
-
-const port = process.env.PORT || 3000;
-app.listen(port, () => console.log("App listening on port " + port));
 
 // Passport
 const passport = require("passport");
