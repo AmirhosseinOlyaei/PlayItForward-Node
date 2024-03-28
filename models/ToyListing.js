@@ -32,22 +32,49 @@ const toyListingSchema = new Schema({
     type: String,
     required: [true, "Description is required"],
   },
-  condition: {
+  status: {
     type: String,
-    required: [true, "Condition is required"],
+    enum: ["available", "reserved", "gone"],
+    default: "available",
+  },
+  category: {
+    type: String,
+    enum: [
+      "Action Figures",
+      "Board Games",
+      "Building Blocks",
+      "Card Games",
+      "Cars",
+      "Dolls",
+      "Plush",
+      "Playsets",
+      "Sports Toys",
+      "Art & Craft",
+      "Games & Puzzles",
+      "Books",
+      "Musical instruments",
+      "Miscellaneous",
+    ],
+    required: [true, "category is required"],
   },
   delivery_method: {
     type: String,
+    enum: ["Pickup", "Delivery"],
     required: [true, "Delivery method is required"],
+  },
+  condition: {
+    type: String,
+    required: ["New", "Like-new", "Lightly-used", "Heavily-used"],
   },
   // pictures: {
   //     type: String,
   //     required: [true, "Pictures are required"],
   // }
-  category: {
-    type: String,
-    required: [true, "Category is required"],
-  },
+  // listed_by_id: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: "User",
+  //   required: [true, "Listed by is required"],
+  // },
   created_date: {
     type: Date,
     default: Date.now,
@@ -58,4 +85,4 @@ const toyListingSchema = new Schema({
   },
 });
 
-module.exports = mongoose.model("ToyListing", toyListingSchema);
+module.exports = mongoose.model("ToyListing", toyListingSchema); // creates Toy Listing model
