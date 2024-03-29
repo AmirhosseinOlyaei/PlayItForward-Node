@@ -33,10 +33,10 @@ const userSchema = new Schema({
     type: String,
     required: [true, "Last name is required"],
   },
-  // profile_picture: {
-  //   type: String,
-  //   required: [true, "Profile picture is required"],
-  // },
+  profile_picture: {
+    type: String,
+    required: [true, "Profile picture is required"],
+  },
   nickname: {
     type: String,
     required: [true, "Nickname is required"],
@@ -46,9 +46,19 @@ const userSchema = new Schema({
     type: String,
     required: [true, "Zipcode is required"],
   },
+  created_by_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: [true, "User id is required"],
+  },
   created_date: {
     type: Date,
     default: Date.now,
+  },
+  modified_by_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: [true, "User id is required"],
   },
   modified_date: {
     type: Date,
