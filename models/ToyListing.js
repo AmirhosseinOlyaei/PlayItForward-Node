@@ -69,20 +69,23 @@ const toyListingSchema = new Schema({
   // pictures: {
   //     type: String,
   //     required: [true, "Pictures are required"],
-  // }
-  // listed_by_id: {
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   ref: "User",
-  //   required: [true, "Listed by is required"],
   // },
   created_date: {
     type: Date,
     default: Date.now,
   },
+  listed_by_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
   modified_date: {
     type: Date,
     default: Date.now,
   },
+  modified_by_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
 });
 
-module.exports = mongoose.model("ToyListing", toyListingSchema); // creates Toy Listing model
+module.exports = mongoose.model("ToyListing", toyListingSchema); // Creates Toy Listing model

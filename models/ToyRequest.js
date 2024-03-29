@@ -25,4 +25,4 @@ const requestToySchema = new Schema({
   },
 });
 
-module.exports = mongoose.model("RequestToy", requestToySchema); // creates Request Toy model
+module.exports = mongoose.model("RequestToy", requestToySchema); // Creates Request Toy model

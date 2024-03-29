@@ -1,9 +1,9 @@
-const RequestToy = require("../../models/RequestToy.js");
+const ToyRequest = require("../../models/ToyRequest.js");
 
 // Function to create a toy request
 const createToyRequest = async (req, res) => {
   try {
-    const makeRequest = await RequestToy.create(req.body);
+    const makeRequest = await ToyRequest.create(req.body);
     res.status(201).json(makeRequest);
   } catch (error) {
     res.status(400).json({
@@ -15,7 +15,7 @@ const createToyRequest = async (req, res) => {
 // Function to get all toy requests
 const getAllToyRequests = async (req, res) => {
   try {
-    const requests = await RequestToy.find();
+    const requests = await ToyRequest.find();
     res.status(200).json(requests);
   } catch (error) {
     res.status(500).json({ message: error.message });

@@ -20,6 +20,14 @@ const starSystemSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  user_id_given_by: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
+  user_id_given_to: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
 });
 
-module.exports = mongoose.model("StarSystem", starSystemSchema); // creates Star System model
+module.exports = mongoose.model("StarSystem", starSystemSchema); // Creates Star System model

@@ -1,4 +1,5 @@
 const ToyListing = require("../../models/ToyListing.js");
+//const Favorite = require("../../models/Favorite.js");
 
 // Function to create a new toy listing
 const createToyListing = async (req, res) => {
@@ -62,6 +63,35 @@ const deleteToyListing = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+
+// Function to get a toy listing view (Pipeline aggregation)
+// ToyListing.aggregate([
+//   { $match: { _id: toy_listing_id } }, // Match the toy listing
+//   {
+//     $lookup: {
+//       from: "FavoriteToy",
+//       localField: "_id",
+//       foreignField: "toy_listing_id",
+//       as: "favorites",
+//     },
+//   },
+//   {
+//     $lookup: {
+//       from: "StarSystem",
+//       localField: "_id",
+//       foreignField: "toyListingId",
+//       as: "starSystems",
+//     },
+//   },
+//   {
+//     $project: {
+//       _id: 1,
+//       title: 1,
+//       favoritesCount: { $size: "$favorites" },
+//       starRating: { $avg: "$starSystems.rating" },
+//     },
+//   },
+// ]);
 
 module.exports = {
   createToyListing,

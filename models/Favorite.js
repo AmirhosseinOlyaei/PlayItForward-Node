@@ -20,11 +20,11 @@ const FavoriteToySchema = new Schema({
   user_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: [true, "User id is required"],
+    //required: [true, "User id is required"],
   },
   time_stamp: {
     type: Date,
     default: Date.now,
   },
 });
-module.exports = mongoose.model("FavoriteToy", FavoriteToySchema); // creates Favorite Toy model
+module.exports = mongoose.model("FavoriteToy", FavoriteToySchema); // Creates Favorite Toy model
