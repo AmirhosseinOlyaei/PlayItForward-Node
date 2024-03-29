@@ -12,7 +12,17 @@ exports.giveStars = async (req, res) => {
   }
 };
 
-// Function to get all s
+// Function to get a single star
+exports.getStar = async (req, res) => {
+  try {
+    const star = await StarSystem.findById(req.params.id);
+    res.status(200).json(star);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Function to get all stars
 exports.getStars = async (req, res) => {
   try {
     const stars = await StarSystem.find();
