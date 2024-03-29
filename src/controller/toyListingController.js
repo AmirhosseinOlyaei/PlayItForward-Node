@@ -12,6 +12,16 @@ exports.createToyListing = async (req, res) => {
   }
 };
 
+// Function to get a single toy listing
+exports.getToyListing = async (req, res) => {
+  try {
+    const listing = await ToyListing.findById(req.params.id);
+    res.status(200).json(listing);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // Function to get all ToyListings
 exports.getAllToyListings = async (req, res) => {
   try {
