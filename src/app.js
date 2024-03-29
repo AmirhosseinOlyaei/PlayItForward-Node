@@ -12,7 +12,7 @@ const mainRouter = require("./routes/mainRouter.js"); // imports mainRouter
 const userRouter = require("./routes/userRouter.js"); // imports userRouter
 const toyListingRouter = require("./routes/toyListingRouter.js"); // imports toyListingRouter
 const starSystemRouter = require("./routes/starSystemRouter.js"); // imports starSystemRouter
-const toyRequestRouter = require("./routes/toyRequestRouter.js"); // imports requestToyRouter
+const toyRequestRouter = require("./routes/toyRequestRouter.js"); // imports toyRequestRouter
 const messageRouter = require("./routes/messageRouter.js"); // imports messageRouter
 const favoriteToyRouter = require("./routes/favoriteToyRouter.js"); // imports favoriteToyRouter
 
