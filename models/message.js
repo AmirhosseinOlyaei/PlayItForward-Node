@@ -23,6 +23,10 @@ const messageSchema = new Schema({
     ref: "User",
     required: [true, "User id to is required"],
   },
+  subject: {
+    type: String,
+    required: [true, "Subject is required"],
+  },
   content: {
     type: String,
     required: [true, "Content is required"],
