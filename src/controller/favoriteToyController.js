@@ -1,6 +1,6 @@
 const FavoriteToy = require("../../models/FavoriteToy.js");
 
-// Function to create a new listing
+// Function to add a new favorite toy
 exports.addFavoriteToy = async (req, res) => {
   try {
     const newFavoriteToy = await FavoriteToy.create(req.body);
@@ -12,7 +12,7 @@ exports.addFavoriteToy = async (req, res) => {
   }
 };
 
-// Function to get all ToyListings
+// Function to get all favorite toys
 exports.getAllFavoriteToys = async (req, res) => {
   try {
     const FavoriteToys = await FavoriteToy.find();
@@ -22,6 +22,7 @@ exports.getAllFavoriteToys = async (req, res) => {
   }
 };
 
+// Function to delete a favorite toy
 exports.deleteFavoriteToy = async (req, res) => {
   const { id } = req.params;
   try {

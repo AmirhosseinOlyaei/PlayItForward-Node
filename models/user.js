@@ -10,6 +10,7 @@ User:
     create_date
     modified_date
     modified_by_id
+    accept terms and conditions - boolean
 Route:
     CREATE
     UPDATE
@@ -25,6 +26,10 @@ const userSchema = new Schema({
     required: [true, "Email is required"],
     unique: true,
   },
+  // password: {
+  //   type: String,
+  //   required: [true, "Password is required"],
+  // },
   first_name: {
     type: String,
     required: [true, "First name is required"],
@@ -54,6 +59,13 @@ const userSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  // connect the user to the toy listings
+  // toyListings: [
+  //   {
+  //     type: Schema.Types.ObjectId,
+  //     ref: "ToyListing",
+  //   },
+  // ],
 });
 
 module.exports = mongoose.model("User", userSchema); // creates User model

@@ -1,6 +1,7 @@
 /*
 Message:
     user_id_from
+    subject
     user_id_to
     toy_listing_id
     content
@@ -16,12 +17,21 @@ const messageSchema = new Schema({
   user_id_from: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: [true, "User id from is required"],
+    // required: [true, "User id from is required"],
+  },
+  subject: {
+    type: String,
+    required: [true, "Subject is required"],
+  },
+  toylisting_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "ToyListing",
+    // required: [true, "Toy listing id is required"],
   },
   user_id_to: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: [true, "User id to is required"],
+    //required: [true, "User id to is required"],
   },
   content: {
     type: String,

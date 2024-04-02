@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const bodyParser = require("body-parser");
 
 const connectDB = require("./config/db.js");
 require("dotenv").config();
@@ -17,6 +18,8 @@ const favoriteToyRouter = require("./router/favoriteToyRouter.js"); // imports f
 app.use(express.json());
 
 // middleware
+app.use(bodyParser.json());
+
 app.use("/api/v1", mainRouter);
 
 app.use("/api/v1/users", userRouter);

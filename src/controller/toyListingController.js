@@ -1,4 +1,5 @@
 const ToyListing = require("../../models/ToyListing.js");
+const User = require("../../models/user.js");
 
 // Function to create a new listing
 exports.createToyListing = async (req, res) => {
@@ -22,6 +23,30 @@ exports.getAllToyListings = async (req, res) => {
   }
 };
 
+// Function to get a single ToyListing with .populate function
+exports.getToyListing = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const listing = await ToyListing.findById(id)
+      .populate({
+        path: "posted_by_user_id",
+        select: "email first_name nickname",
+        model: User,
+      })
+      .exec();
+
+    if (!listing) {
+      return res.status(404).json({ message: "Toy Listing not found" });
+    }
+
+    res.status(200).json(listing);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+// Function to update a ToyListing
 exports.updateToyListing = async (req, res) => {
   const { id } = req.params;
 
@@ -38,6 +63,7 @@ exports.updateToyListing = async (req, res) => {
   }
 };
 
+// Function to delete a ToyListing
 exports.deleteToyListing = async (req, res) => {
   const { id } = req.params;
   try {
