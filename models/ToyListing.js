@@ -57,6 +57,10 @@ const toyListingSchema = new Schema({
     ],
     required: [true, "category is required"],
   },
+  zip_code: {
+    type: String,
+    required: [true, "Zip code is required"],
+  },
   delivery_method: {
     type: String,
     enum: ["Pickup", "Delivery"],
