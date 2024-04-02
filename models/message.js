@@ -16,12 +16,17 @@ const messageSchema = new Schema({
   user_id_from: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: [true, "User id from is required"],
+    //required: [true, "User id from is required"],
   },
   user_id_to: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: [true, "User id to is required"],
+    //required: [true, "User id to is required"],
+  },
+  toy_listing_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "ToyListing",
+    //required: [true, "Toy listing id is required"],
   },
   content: {
     type: String,
