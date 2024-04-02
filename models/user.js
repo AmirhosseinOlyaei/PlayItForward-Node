@@ -35,7 +35,6 @@ const userSchema = new Schema({
   },
   profile_picture: {
     type: String,
-    required: [true, "Profile picture is required"],
   },
   nickname: {
     type: String,
