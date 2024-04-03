@@ -28,6 +28,10 @@ const messageSchema = new Schema({
     ref: "ToyListing",
     //required: [true, "Toy listing id is required"],
   },
+  subject: {
+    type: String,
+    required: [true, "Subject is required"],
+  },
   content: {
     type: String,
     required: [true, "Content is required"],

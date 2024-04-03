@@ -57,6 +57,10 @@ const toyListingSchema = new Schema({
     ],
     required: [true, "category is required"],
   },
+  zip_code: {
+    type: String,
+    required: [true, "Zip code is required"],
+  },
   delivery_method: {
     type: String,
     enum: ["Pickup", "Delivery"],
@@ -78,10 +82,6 @@ const toyListingSchema = new Schema({
   given_to_user_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-  },
-  zip_code: {
-    type: String,
-    required: [true, "Zip code is required"],
   },
   created_date: {
     type: Date,
