@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-
+const cors = require("cors");
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
@@ -72,6 +72,7 @@ app.use("/api/v1/requests", requestToyRouter);
 app.use("/api/v1/messages", messageRouter);
 app.use("/api/v1/favorites", favoriteToyRouter);
 
+app.use(cors());
 // connect to mongodb
 connectDB();
 // server
