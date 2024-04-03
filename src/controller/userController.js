@@ -32,6 +32,7 @@ exports.getUser = async (req, res) => {
   }
 };
 
+// Function to update user
 exports.updateUser = async (req, res) => {
   const { id } = req.params;
 
