@@ -72,7 +72,7 @@ app.use("/api/v1/requests", requestToyRouter);
 app.use("/api/v1/messages", messageRouter);
 app.use("/api/v1/favorites", favoriteToyRouter);
 
-app.use(cors());
+app.use(cors({ origin: "*" }));
 // connect to mongodb
 connectDB();
 // server
