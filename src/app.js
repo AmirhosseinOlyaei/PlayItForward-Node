@@ -17,6 +17,7 @@ const starSystemRouter = require("./router/starSystemRouter.js"); // imports sta
 const requestToyRouter = require("./router/requestToyRouter.js"); // imports requestToyRouter
 const messageRouter = require("./router/messageRouter.js"); // imports messageRouter
 const favoriteToyRouter = require("./router/favoriteToyRouter.js"); // imports favoriteToyRouter
+const searchRouter = require("./router/searchRouter.js"); // imports searchRouter
 
 app.use(cors({ origin: "*" }));
 app.use(express.urlencoded({ extended: true })); //middleware configuration for an Express.js application, specifically for parsing incoming request bodies
@@ -65,7 +66,7 @@ app.get(
   }
 );
 
-// middleware
+// middleware: use routers
 app.use("/api/v1", mainRouter);
 
 app.use("/api/v1/users", userRouter);
@@ -74,7 +75,7 @@ app.use("/api/v1/stars", starSystemRouter);
 app.use("/api/v1/requests", requestToyRouter);
 app.use("/api/v1/messages", messageRouter);
 app.use("/api/v1/favorites", favoriteToyRouter);
-
+app.use("/api/v1/search", searchRouter);
 // connect to mongodb
 connectDB();
 // server
