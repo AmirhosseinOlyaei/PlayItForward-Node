@@ -19,6 +19,7 @@ const messageRouter = require("./router/messageRouter.js"); // imports messageRo
 const favoriteToyRouter = require("./router/favoriteToyRouter.js"); // imports favoriteToyRouter
 
 app.use(cors({ origin: "*" }));
+app.use(express.urlencoded({ extended: true })); //middleware configuration for an Express.js application, specifically for parsing incoming request bodies
 app.use(express.json());
 
 passport.use(
