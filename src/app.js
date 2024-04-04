@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
+
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
@@ -17,6 +18,7 @@ const requestToyRouter = require("./router/requestToyRouter.js"); // imports req
 const messageRouter = require("./router/messageRouter.js"); // imports messageRouter
 const favoriteToyRouter = require("./router/favoriteToyRouter.js"); // imports favoriteToyRouter
 
+app.use(cors({ origin: "*" }));
 app.use(express.json());
 
 passport.use(
@@ -72,7 +74,6 @@ app.use("/api/v1/requests", requestToyRouter);
 app.use("/api/v1/messages", messageRouter);
 app.use("/api/v1/favorites", favoriteToyRouter);
 
-app.use(cors({ origin: "*" }));
 // connect to mongodb
 connectDB();
 // server
