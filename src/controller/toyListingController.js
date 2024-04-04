@@ -15,34 +15,21 @@ exports.createToyListing = async (req, res) => {
 
 // Function to get a single toy listing
 exports.getToyListing = async (req, res) => {
-  const { id } = req.params;
   try {
-    const listing = await ToyListing.findById(id)
-      .populate({
-        path: "listed_by_id",
-        select: "email first_name nickname",
-        model: User,
-      })
-      .populate({
-        path: "given_to_user_id",
-        select: "email first_name nickname",
-        model: User,
-      })
-      .populate({
-        path: "modified_by_id",
-        select: "email first_name nickname",
-        model: User,
-      })
-      .exec();
-
+    // Query ToyListing by ID and populate the created_by_id field to fetch the associated user's information
+    const listing = await ToyListing.findById(req.params.id).populate({
+      path: "created_by_id",
+      select: "email first_name last_name profile_picture", // Specify the fields you want to populate
+    });
+    // If no listing found with the given ID
     if (!listing) {
       return res.status(404).json({ message: "Toy Listing not found" });
     }
 
+    // Return the toy listing along with the user's details
     res.status(200).json(listing);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ message: error.message });
   }
 };
 
