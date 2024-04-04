@@ -17,10 +17,15 @@ exports.createToyListing = async (req, res) => {
 exports.getToyListing = async (req, res) => {
   try {
     // Query ToyListing by ID and populate the created_by_id field to fetch the associated user's information
-    const listing = await ToyListing.findById(req.params.id).populate({
-      path: "created_by_id",
-      select: "email first_name last_name profile_picture", // Specify the fields you want to populate
-    });
+    const listing = await ToyListing.findById(req.params.id)
+      .populate({
+        path: "created_by_id",
+        select: "email first_name last_name profile_picture", // Specify the fields you want to populate
+      })
+      .populate({
+        path: "modified_by_id",
+        select: "email first_name last_name profile_picture",
+      });
     // If no listing found with the given ID
     if (!listing) {
       return res.status(404).json({ message: "Toy Listing not found" });
