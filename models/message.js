@@ -42,4 +42,4 @@ const messageSchema = new Schema({
   },
 });
 
-module.exports = mongoose.model("Message", messageSchema); // creates User model
+module.exports = mongoose.model("Message", messageSchema); // creates Message model

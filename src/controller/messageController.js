@@ -2,11 +2,33 @@ const Message = require("../../models/message.js");
 const User = require("../../models/User.js");
 const ToyListing = require("../../models/ToyListing.js");
 
-// Function to create a message
+// Function to create a message and include user and toy listing information
 exports.sendMessage = async (req, res) => {
   try {
+    // Step 1: Create the message with the request body
     const newMessage = await Message.create(req.body);
-    res.status(201).json(newMessage);
+
+    // Step 2: Fetch the newly created message with user and toy listing information populated
+    const populatedMessage = await Message.findById(newMessage._id)
+      .populate({
+        path: "user_id_from",
+        select: "email first_name last_name nickname",
+        model: User,
+      })
+      .populate({
+        path: "user_id_to",
+        select: "email first_name last_name nickname",
+        model: User,
+      })
+      .populate({
+        path: "toy_listing_id",
+        select: "title description zipcode",
+        model: ToyListing,
+      })
+      .exec();
+
+    // Step 3: Respond with the populated message
+    res.status(201).json(populatedMessage);
   } catch (error) {
     res.status(400).json({
       message: error.message,
