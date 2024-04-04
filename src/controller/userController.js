@@ -1,4 +1,5 @@
 const User = require("../../models/User.js");
+const mongoose = require("mongoose");
 
 // Function to create a new user
 exports.createUser = async (req, res) => {
@@ -25,8 +26,45 @@ exports.getAllUsers = async (req, res) => {
 // Function to get a single user
 exports.getUser = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
-    res.status(200).json(user);
+    const user = await User.aggregate([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(req.params.id),
+        },
+      },
+      {
+        $lookup: {
+          from: "starsystems", // the name of the collection in the database
+          localField: "_id",
+          foreignField: "user_id_given_to", //field in the StarSystem model to match with
+          as: "averageRating", // alias for the resulting array containing the average rating
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          email: 1,
+          first_name: 1,
+          last_name: 1,
+          profile_picture: 1,
+          nickname: 1,
+          zipcode: 1,
+          // created_by_id: 1,
+          create_date: 1,
+          modified_date: 1,
+          // modified_by_id: 1,
+          averageReviewStars: {
+            $avg: "$averageRating.number_of_stars",
+          },
+        },
+      },
+    ]);
+
+    if (!user || user.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    } else {
+      res.status(200).json(user[0]);
+    }
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

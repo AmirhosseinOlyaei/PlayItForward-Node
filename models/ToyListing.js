@@ -74,7 +74,7 @@ const toyListingSchema = new Schema({
     type: String,
     required: [true, "Pictures are required"],
   },
-  listed_by_id: {
+  created_by_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     // required: [true, "Listed by is required"],
