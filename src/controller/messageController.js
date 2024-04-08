@@ -43,12 +43,12 @@ exports.getMessage = async (req, res) => {
     const message = await Message.findById(id)
       .populate({
         path: "user_id_from",
-        select: "email first_name nickname",
+        select: "email first_name last_name nickname",
         model: User,
       })
       .populate({
         path: "user_id_to",
-        select: "email first_name nickname",
+        select: "email first_name last_name nickname",
         model: User,
       })
       .populate({
@@ -73,12 +73,12 @@ exports.getAllMessages = async (req, res) => {
     const allMessages = await Message.find()
       .populate({
         path: "user_id_from",
-        select: "email first_name nickname",
+        select: "email first_name last_name nickname",
         model: User,
       })
       .populate({
         path: "user_id_to",
-        select: "email first_name nickname",
+        select: "email first_name last_name nickname",
         model: User,
       })
       .populate({
