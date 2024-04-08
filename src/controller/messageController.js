@@ -67,12 +67,36 @@ exports.getMessage = async (req, res) => {
   }
 };
 
-// Function to get all messages
+// Function to get all messages with user details
 exports.getAllMessages = async (req, res) => {
   try {
-    const allMessages = await Message.find();
+    const allMessages = await Message.find()
+      .populate({
+        path: "user_id_from",
+        select: "email first_name nickname",
+        model: User,
+      })
+      .populate({
+        path: "user_id_to",
+        select: "email first_name nickname",
+        model: User,
+      })
+      .populate({
+        path: "toy_listing_id",
+        select: "title description zipcode",
+        model: ToyListing,
+      })
+      .exec();
     res.status(200).json(allMessages);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+// exports.getAllMessages = async (req, res) => {
+//   try {
+//     const allMessages = await Message.find();
+//     res.status(200).json(allMessages);
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
