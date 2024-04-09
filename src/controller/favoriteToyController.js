@@ -88,3 +88,25 @@ exports.deleteFavoriteToy = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+
+// Function to check if a toy listing is in the user's favorites
+exports.checkFavorite = async (req, res) => {
+  const { userId, toyListingId } = req.params; // Assuming you're passing these as URL parameters
+
+  try {
+    const favorite = await FavoriteToy.findOne({
+      user_id: userId,
+      toy_listing_id: toyListingId,
+    });
+
+    if (favorite) {
+      return res.status(200).json({ isFavorite: true });
+    } else {
+      return res.status(200).json({ isFavorite: false });
+    }
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Error checking favorite", error: error.message });
+  }
+};
