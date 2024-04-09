@@ -45,6 +45,10 @@ const userSchema = new Schema({
     type: String,
     required: [true, "Zipcode is required"],
   },
+  favoriteToys: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: "ToyListing",
+  },
   created_by_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
