@@ -84,18 +84,28 @@ exports.getAllToyListings = async (req, res) => {
 
 // Function to update a toy listing
 exports.updateToyListing = async (req, res) => {
-  const { id } = req.params;
+  const { id } = req.params; // Assuming the ID of the toy listing to update is passed as a URL parameter
 
   try {
-    const updateToyListing = await ToyListing.findByIdAndUpdate(id, req.body, {
+    // Step 1: Update the toy listing with the request body
+    // Note: { new: true } option returns the document after update was applied
+    let updatedToyListing = await ToyListing.findByIdAndUpdate(id, req.body, {
       new: true,
     });
-    if (!updateToyListing) {
-      return res.status(404).json({ message: "Toy Listing not found" });
+
+    if (!updatedToyListing) {
+      return res.status(404).json({ message: "Toy listing not found" });
     }
-    res.status(200).json(updateToyListing);
+
+    // Step 2: Populate the listed_by_id field with the lister's information
+    updatedToyListing = await ToyListing.findById(updatedToyListing._id)
+      .populate("listed_by_id", "first_name last_name email") // Adjust fields as necessary
+      .exec();
+
+    // Step 3: Respond with the updated toy listing, including the populated lister's information
+    res.status(200).json(updatedToyListing);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
