@@ -4,12 +4,20 @@ const User = require("../../models/User.js");
 // Function to create a new listing
 exports.createToyListing = async (req, res) => {
   try {
-    const newListing = await ToyListing.create(req.body);
-    res.status(201).json(newListing);
+    // Create the toy listing with the request body
+    let newToyListing = new ToyListing(req.body);
+    await newToyListing.save();
+
+    // Now populate the lister's information
+    newToyListing = await ToyListing.findById(newToyListing._id)
+      .populate("listed_by_id", "first_name last_name email") // Adjust the fields you want to populate
+      .exec();
+
+    // Respond with the new toy listing, including the populated lister information
+    res.status(201).json(newToyListing);
   } catch (error) {
-    res.status(400).json({
-      message: error.message,
-    });
+    // Handle errors, such as validation errors or database errors
+    res.status(400).json({ message: error.message });
   }
 };
 

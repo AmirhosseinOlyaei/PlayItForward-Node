@@ -68,7 +68,7 @@ const toyListingSchema = new Schema({
   },
   condition: {
     type: String,
-    required: ["New", "Like-new", "Lightly-used", "Heavily-used"],
+    enum: ["New", "Like-new", "Lightly-used", "Heavily-used"],
   },
   pictures: {
     type: String,

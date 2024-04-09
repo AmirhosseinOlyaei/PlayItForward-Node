@@ -48,7 +48,7 @@ const userSchema = new Schema({
   created_by_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: [true, "User id is required"],
+    // required: [true, "User id is required"],
   },
   created_date: {
     type: Date,
@@ -57,7 +57,7 @@ const userSchema = new Schema({
   modified_by_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: [true, "User id is required"],
+    // required: [true, "User id is required"],
   },
   modified_date: {
     type: Date,
