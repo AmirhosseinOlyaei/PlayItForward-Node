@@ -100,3 +100,21 @@ exports.getAllMessages = async (req, res) => {
 //     res.status(500).json({ message: error.message });
 //   }
 // };
+
+// Function to delete a message
+exports.deleteMessage = async (req, res) => {
+  const { id } = req.params; // Get the message ID from the request parameters
+  try {
+    const message = await Message.findByIdAndDelete(id); // Attempt to find and delete the message by ID
+
+    if (!message) {
+      return res.status(404).json({ message: "Message not found" }); // Message not found
+    }
+
+    // If the message is successfully found and deleted
+    res.status(200).json({ message: "Message successfully deleted" });
+  } catch (error) {
+    // If an error occurs during the process
+    res.status(500).json({ message: error.message });
+  }
+};

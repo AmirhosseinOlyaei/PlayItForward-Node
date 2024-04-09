@@ -1,15 +1,34 @@
-const FavoriteToy = require("../../models/FavoriteToy.js");
 const User = require("../../models/User.js");
+const ToyListing = require("../../models/ToyListing.js");
+const FavoriteToy = require("../../models/FavoriteToy.js");
 
-// Function to create a new favorite toy
 exports.addFavoriteToy = async (req, res) => {
   try {
-    const newFavoriteToy = await FavoriteToy.create(req.body);
-    res.status(201).json(newFavoriteToy);
-  } catch (error) {
-    res.status(400).json({
-      message: error.message,
+    const { user_id, toy_listing_id } = req.body;
+
+    // Validate that both the user and toy listing exist
+    const userExists = await User.findById(user_id);
+    const toyListingExists = await ToyListing.findById(toy_listing_id);
+    if (!userExists || !toyListingExists) {
+      return res.status(404).json({ message: "User or Toy Listing not found" });
+    }
+
+    // Assuming your schema fields are actually named 'user' and 'toyListing'
+    const newFavoriteToy = await FavoriteToy.create({
+      user_id: user_id,
+      toy_listing_id: toy_listing_id,
     });
+
+    // Find the newly created document and populate the necessary fields
+    const populatedFavoriteToy = await FavoriteToy.findById(newFavoriteToy._id)
+      .populate("user_id", "first_name last_name email profile_picture")
+      .populate("toy_listing_id", "title description pictures")
+      .exec(); // Use execPopulate since we're calling populate on a document, not a query
+
+    res.status(201).json(populatedFavoriteToy);
+  } catch (error) {
+    console.error(error); // Log the full error to your server's console for debugging
+    res.status(400).json({ message: error.message });
   }
 };
 
