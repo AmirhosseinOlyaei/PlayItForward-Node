@@ -122,3 +122,17 @@ exports.deleteToyListing = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+
+
+//get enum values for a specific field
+
+exports.getEnumValues = async (req, res) => {
+  const fieldName = req.params.fieldName;
+  const enumValues = ToyListing.schema.path(fieldName).enumValues;
+
+  if(enumValues){
+    res.send(enumValues);
+  } else {
+    res.status(404).json({ message: "Field not found" });
+  }
+}
