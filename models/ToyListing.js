@@ -70,10 +70,6 @@ const toyListingSchema = new Schema({
     type: String,
     enum: ["New", "Like-new", "Lightly-used", "Heavily-used"],
   },
-  pictures: {
-    type: String,
-    required: [true, "Pictures are required"],
-  },
   listed_by_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

@@ -18,7 +18,7 @@ const requestToyRouter = require("./router/requestToyRouter.js"); // imports req
 const messageRouter = require("./router/messageRouter.js"); // imports messageRouter
 const favoriteToyRouter = require("./router/favoriteToyRouter.js"); // imports favoriteToyRouter
 const searchRouter = require("./router/searchRouter.js"); // imports searchRouter
-
+const imageRouter = require("./router/imageRouter.js"); // imports imageRouter
 app.use(cors({ origin: "*" }));
 app.use(express.urlencoded({ extended: true })); //middleware configuration for an Express.js application, specifically for parsing incoming request bodies
 app.use(express.json());
@@ -76,6 +76,7 @@ app.use("/api/v1/requests", requestToyRouter);
 app.use("/api/v1/messages", messageRouter);
 app.use("/api/v1/favorites", favoriteToyRouter);
 app.use("/api/v1/search", searchRouter);
+app.use("/api/v1/images", imageRouter);
 // connect to mongodb
 connectDB();
 // server
