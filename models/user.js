@@ -33,10 +33,6 @@ const userSchema = new Schema({
     type: String,
     required: [true, "Last name is required"],
   },
-  pictures: {
-    data: Buffer,
-    contentType: String,
-  },
   nickname: {
     type: String,
     required: [true, "Nickname is required"],
