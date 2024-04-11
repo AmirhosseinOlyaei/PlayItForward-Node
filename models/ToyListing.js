@@ -79,6 +79,10 @@ const toyListingSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
+  imageUrl: {
+    type: String,
+    required: true,
+  },
   created_date: {
     type: Date,
     default: Date.now,

@@ -1,9 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const imageController = require("../controller/imageController");
-const multer = require("multer");
-const upload = multer();
+const {
+  uploadSingleImage,
+  uploadImage,
+} = require("../controller/imageController");
 
-router.post("/upload", upload.single("image"), imageController.uploadImage);
+// Route to handle image upload
+router.post("/upload", uploadSingleImage, uploadImage);
 
 module.exports = router;
