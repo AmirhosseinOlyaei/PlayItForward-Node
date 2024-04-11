@@ -1,20 +1,40 @@
-const Image = require("../../models/Images.js");
 const multer = require("multer");
-const upload = multer({ dest: "uploads/" });
 
-exports.uploadImage = async (req, res) => {
-  try {
-    const newImage = new Image({
-      img: {
-        data: req.file.buffer,
-        contentType: req.file.mimetype,
-      },
+// Set up storage with Multer
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/"); // Ensure this directory exists
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(
+      null,
+      file.fieldname + "-" + uniqueSuffix + "." + file.mimetype.split("/")[1]
+    );
+  },
+});
+
+const upload = multer({ storage: storage });
+
+exports.uploadSingleImage = upload.single("image");
+
+exports.uploadImage = (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({
+      success: false,
+      message: "No file uploaded.",
     });
-    await newImage.save();
-    res
-      .status(201)
-      .send({ message: "Image uploaded successfully", id: newImage._id });
-  } catch (error) {
-    res.status(500).send({ message: error.message });
   }
+
+  const file = req.file;
+  res.status(201).json({
+    success: true,
+    message: "Image uploaded successfully.",
+    file: {
+      name: file.filename,
+      size: file.size,
+      type: file.mimetype,
+      url: `https://yourapi.com/uploads/${file.filename}`,
+    },
+  });
 };
