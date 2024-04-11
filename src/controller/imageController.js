@@ -33,7 +33,7 @@ exports.uploadImage = (req, res) => {
       name: file.filename,
       size: file.size,
       type: file.mimetype,
-      url: `https://yourapi.com/uploads/${file.filename}`,
+      url: `http://localhost:8000/api/v1/images/${file.filename}`,
     },
   });
 };
