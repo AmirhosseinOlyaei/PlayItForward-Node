@@ -1,5 +1,7 @@
 const multer = require("multer");
+const path = require("path");
 
+// Setup for multer to handle file uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "uploads/");
@@ -15,8 +17,10 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+// Function to upload a single image
 exports.uploadSingleImage = upload.single("image");
 
+// Function to handle the response after uploading an image
 exports.uploadImage = (req, res) => {
   if (!req.file) {
     return res.status(400).json({
@@ -33,7 +37,21 @@ exports.uploadImage = (req, res) => {
       name: file.filename,
       size: file.size,
       type: file.mimetype,
-      url: `http://localhost:8000/api/v1/images/${file.filename}`,
+      url: `http://localhost:8000/api/v1/images/upload/${file.filename}`,
     },
+  });
+};
+
+// Function to retrieve an image
+exports.getImage = (req, res) => {
+  const filename = req.params.filename;
+  const filepath = path.join(__dirname, "../../uploads", filename);
+  res.sendFile(filepath, (err) => {
+    if (err) {
+      return res.status(404).send({
+        success: false,
+        message: "Image not found.",
+      });
+    }
   });
 };
