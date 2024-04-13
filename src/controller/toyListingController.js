@@ -53,8 +53,19 @@ exports.getToyListing = async (req, res) => {
 
 // Function to get all ToyListings and populate the user's information
 exports.getAllToyListings = async (req, res) => {
+  const { delivery_method, zipCode } = req.query; // Correctly capturing query parameters
+
   try {
-    const listings = await ToyListing.find()
+    // Build a query object dynamically based on provided parameters
+    const query = {};
+    if (delivery_method && delivery_method !== "All") {
+      query.delivery_method = delivery_method;
+    }
+    if (zipCode) {
+      query.zip_code = zipCode; // Ensure zipCode is expected to be used directly
+    }
+
+    const listings = await ToyListing.find(query)
       .populate({
         path: "listed_by_id",
         select: "email first_name last_name profile_picture",
@@ -68,9 +79,14 @@ exports.getAllToyListings = async (req, res) => {
         select: "email first_name last_name profile_picture",
       })
       .exec();
+
     res.status(200).json(listings);
-  } catch (error) {}
+  } catch (error) {
+    console.error("Error fetching toy listings:", error); // It's good to log the actual error for troubleshooting.
+    res.status(500).json({ message: "Internal server error" }); // It's often best to not expose raw error messages to the client.
+  }
 };
+
 // Function to get all ToyListings
 
 // exports.getAllToyListings = async (req, res) => {
@@ -123,16 +139,15 @@ exports.deleteToyListing = async (req, res) => {
   }
 };
 
-
 //get enum values for a specific field
 
 exports.getEnumValues = async (req, res) => {
   const fieldName = req.params.fieldName;
   const enumValues = ToyListing.schema.path(fieldName).enumValues;
 
-  if(enumValues){
+  if (enumValues) {
     res.send(enumValues);
   } else {
     res.status(404).json({ message: "Field not found" });
   }
-}
+};
