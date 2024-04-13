@@ -6,6 +6,7 @@ const toyListingController = require("../controller/toyListingController.js");
 router.post("/", toyListingController.createToyListing);
 router.get("/", toyListingController.getAllToyListings);
 router.get("/:id", toyListingController.getToyListing);
+router.get("/enums/:fieldName", toyListingController.getEnumValues);
 router.put("/:id", toyListingController.updateToyListing);
 router.delete("/:id", toyListingController.deleteToyListing);
 

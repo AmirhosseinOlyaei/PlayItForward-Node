@@ -10,7 +10,7 @@ Toy Listing:
     category
     zip_code
     status
-    created_by_id
+    listed_by_id
     create date
     modified_date
     modified_by_id
@@ -68,16 +68,20 @@ const toyListingSchema = new Schema({
   },
   condition: {
     type: String,
-    required: ["New", "Like-new", "Lightly-used", "Heavily-used"],
+    enum: ["New", "Like-new", "Lightly-used", "Heavily-used"],
   },
-  pictures: {
-    type: String,
-    required: [true, "Pictures are required"],
-  },
-  created_by_id: {
+  listed_by_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: [true, "Listed by is required"],
+    // required: [true, "Listed by is required"],
+  },
+  given_to_user_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
+  imageUrl: {
+    type: String,
+    required: true,
   },
   created_date: {
     type: Date,

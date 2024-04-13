@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const cors = require("cors");
 
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
@@ -16,7 +17,10 @@ const starSystemRouter = require("./router/starSystemRouter.js"); // imports sta
 const requestToyRouter = require("./router/requestToyRouter.js"); // imports requestToyRouter
 const messageRouter = require("./router/messageRouter.js"); // imports messageRouter
 const favoriteToyRouter = require("./router/favoriteToyRouter.js"); // imports favoriteToyRouter
-
+const searchRouter = require("./router/searchRouter.js"); // imports searchRouter
+const imageRouter = require("./router/imageRouter.js"); // imports imageRouter
+app.use(cors({ origin: "*" }));
+app.use(express.urlencoded({ extended: true })); //middleware configuration for an Express.js application, specifically for parsing incoming request bodies
 app.use(express.json());
 
 passport.use(
@@ -24,7 +28,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/auth/google/callback",
+      callbackURL: "http://localhost:5173/auth/google/callback",
     },
     (accessToken, refreshToken, profile, done) => {
       // Here, you can handle the user's profile information returned by Google
@@ -62,7 +66,7 @@ app.get(
   }
 );
 
-// middleware
+// middleware: use routers
 app.use("/api/v1", mainRouter);
 
 app.use("/api/v1/users", userRouter);
@@ -71,7 +75,8 @@ app.use("/api/v1/stars", starSystemRouter);
 app.use("/api/v1/requests", requestToyRouter);
 app.use("/api/v1/messages", messageRouter);
 app.use("/api/v1/favorites", favoriteToyRouter);
-
+app.use("/api/v1/search", searchRouter);
+app.use("/api/v1/images", imageRouter);
 // connect to mongodb
 connectDB();
 // server
