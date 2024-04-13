@@ -10,4 +10,7 @@ router.get("/enums/:fieldName", toyListingController.getEnumValues);
 router.put("/:id", toyListingController.updateToyListing);
 router.delete("/:id", toyListingController.deleteToyListing);
 
+// Get categories from the enum values in the model
+router.get("/categories", toyListingController.getCategories);
+
 module.exports = router;

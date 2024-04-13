@@ -51,52 +51,57 @@ exports.getToyListing = async (req, res) => {
   }
 };
 
-// Function to get all ToyListings and populate the user's information
-exports.getAllToyListings = async (req, res) => {
-  const { delivery_method, zipCode } = req.query; // Correctly capturing query parameters
+// Populate options defined at a central place
+const populateOptions = [
+  {
+    path: "listed_by_id",
+    select: "email first_name last_name profile_picture",
+  },
+  {
+    path: "modified_by_id",
+    select: "email first_name last_name profile_picture",
+  },
+  {
+    path: "given_to_user_id",
+    select: "email first_name last_name profile_picture",
+  },
+];
 
+exports.getAllToyListings = async (req, res) => {
+  const { delivery_method, zipCode, categories } = req.query;
   try {
-    // Build a query object dynamically based on provided parameters
     const query = {};
     if (delivery_method && delivery_method !== "All") {
       query.delivery_method = delivery_method;
     }
     if (zipCode) {
-      query.zip_code = zipCode; // Ensure zipCode is expected to be used directly
+      query.zip_code = zipCode;
+    }
+    if (categories) {
+      const categoryArray = categories.split(",");
+      const validCategories = ToyListing.schema.path("category").enumValues;
+      const invalidCategories = categoryArray.filter(
+        (cat) => !validCategories.includes(cat)
+      );
+
+      if (invalidCategories.length > 0) {
+        return res.status(400).json({
+          message: "Invalid categories: " + invalidCategories.join(", "),
+        });
+      }
+
+      query.category = { $in: categoryArray };
     }
 
     const listings = await ToyListing.find(query)
-      .populate({
-        path: "listed_by_id",
-        select: "email first_name last_name profile_picture",
-      })
-      .populate({
-        path: "modified_by_id",
-        select: "email first_name last_name profile_picture",
-      })
-      .populate({
-        path: "given_to_user_id",
-        select: "email first_name last_name profile_picture",
-      })
+      .populate(populateOptions)
       .exec();
-
     res.status(200).json(listings);
   } catch (error) {
-    console.error("Error fetching toy listings:", error); // It's good to log the actual error for troubleshooting.
-    res.status(500).json({ message: "Internal server error" }); // It's often best to not expose raw error messages to the client.
+    console.error("Error fetching toy listings:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
-
-// Function to get all ToyListings
-
-// exports.getAllToyListings = async (req, res) => {
-//   try {
-//     const listings = await ToyListing.find();
-//     res.status(200).json(listings);
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
 
 // Function to update a toy listing
 exports.updateToyListing = async (req, res) => {
@@ -150,4 +155,10 @@ exports.getEnumValues = async (req, res) => {
   } else {
     res.status(404).json({ message: "Field not found" });
   }
+};
+
+// Fetch categories
+exports.getCategories = (req, res) => {
+  // Assuming categories are fixed, we directly send the enum values
+  res.json(ToyListing.schema.path("category").enumValues);
 };
