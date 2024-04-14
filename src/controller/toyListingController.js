@@ -70,13 +70,18 @@ const populateOptions = [
 exports.getAllToyListings = async (req, res) => {
   const { delivery_method, zipCode, categories } = req.query;
   try {
+    // Filter by delivery method unless the special 'All' value is passed
     const query = {};
     if (delivery_method && delivery_method !== "All") {
       query.delivery_method = delivery_method;
     }
+
+    // Filter by zip code if provided
     if (zipCode) {
       query.zip_code = zipCode;
     }
+
+    // Filter by categories if provided
     if (categories) {
       const categoryArray = categories.split(",");
       const validCategories = ToyListing.schema.path("category").enumValues;
@@ -84,6 +89,7 @@ exports.getAllToyListings = async (req, res) => {
         (cat) => !validCategories.includes(cat)
       );
 
+      // Validate categories against the schema's enum values
       if (invalidCategories.length > 0) {
         return res.status(400).json({
           message: "Invalid categories: " + invalidCategories.join(", "),
@@ -93,9 +99,12 @@ exports.getAllToyListings = async (req, res) => {
       query.category = { $in: categoryArray };
     }
 
+    // Execute the query with any specified filters
     const listings = await ToyListing.find(query)
       .populate(populateOptions)
       .exec();
+
+    // Send the filtered listings as a response
     res.status(200).json(listings);
   } catch (error) {
     console.error("Error fetching toy listings:", error);
