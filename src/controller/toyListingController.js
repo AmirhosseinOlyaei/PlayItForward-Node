@@ -71,7 +71,7 @@ exports.getAllToyListings = async (req, res) => {
   const { delivery_method, zipCodes, categories } = req.query;
   try {
     // Filter by delivery method unless the special 'All' value is passed
-    const query = { status: "available" };
+    const query = { status: { $in: ["available", "reserved"] } };
     if (delivery_method && delivery_method !== "All") {
       query.delivery_method = delivery_method;
     }
