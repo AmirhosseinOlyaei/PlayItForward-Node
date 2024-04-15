@@ -68,7 +68,7 @@ const populateOptions = [
 ];
 
 exports.getAllToyListings = async (req, res) => {
-  const { delivery_method, zipCode, categories } = req.query;
+  const { delivery_method, zipCodes, categories } = req.query;
   try {
     // Filter by delivery method unless the special 'All' value is passed
     const query = { status: "available" };
@@ -76,9 +76,10 @@ exports.getAllToyListings = async (req, res) => {
       query.delivery_method = delivery_method;
     }
 
-    // Filter by zip code if provided
-    if (zipCode) {
-      query.zip_code = zipCode;
+    // Filter by zip code if provided. Expecting a comma-separated list of zip codes.
+    if (zipCodes) {
+      const zipCodesArray = zipCodes.split(","); // Convert zipCodes string to an array
+      query.zip_code = { $in: zipCodesArray }; // Use MongoDB's $in operator to match any of the zip codes
     }
 
     // Filter by categories if provided
