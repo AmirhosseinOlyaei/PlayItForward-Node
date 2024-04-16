@@ -73,13 +73,16 @@ exports.getAllToyListings = async (req, res) => {
   try {
     const query = { status: { $in: ["available", "reserved"] } };
 
+    if (search && search.trim() !== "") {
+      query.$text = { $search: search };
+    }
+
     if (delivery_method && delivery_method !== "All") {
       query.delivery_method = delivery_method;
     }
 
     if (zipCodes) {
-      const zipCodesArray = zipCodes.split(",");
-      query.zip_code = { $in: zipCodesArray };
+      query.zip_code = zipCodes;
     }
 
     if (categories) {

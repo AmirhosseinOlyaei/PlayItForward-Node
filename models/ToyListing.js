@@ -20,6 +20,7 @@ Route:
     GET: ability to pass filter
     DELETE
 */
+// src/models/ToyListing.js
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
@@ -27,10 +28,12 @@ const toyListingSchema = new Schema({
   title: {
     type: String,
     required: [true, "Title is required"],
+    index: "text",
   },
   description: {
     type: String,
     required: [true, "Description is required"],
+    index: "text",
   },
   status: {
     type: String,
@@ -66,6 +69,7 @@ const toyListingSchema = new Schema({
   zip_code: {
     type: String,
     required: [true, "Zip code is required"],
+    index: true,
   },
   delivery_method: {
     type: String,
