@@ -1,3 +1,4 @@
+// src/controller/toyListingController.js
 const ToyListing = require("../../models/ToyListing.js");
 const User = require("../../models/User.js");
 
@@ -68,21 +69,19 @@ const populateOptions = [
 ];
 
 exports.getAllToyListings = async (req, res) => {
-  const { delivery_method, zipCodes, categories } = req.query;
+  const { delivery_method, zipCodes, categories, search } = req.query;
   try {
-    // Filter by delivery method unless the special 'All' value is passed
     const query = { status: { $in: ["available", "reserved"] } };
+
     if (delivery_method && delivery_method !== "All") {
       query.delivery_method = delivery_method;
     }
 
-    // Filter by zip code if provided. Expecting a comma-separated list of zip codes.
     if (zipCodes) {
-      const zipCodesArray = zipCodes.split(","); // Convert zipCodes string to an array
-      query.zip_code = { $in: zipCodesArray }; // Use MongoDB's $in operator to match any of the zip codes
+      const zipCodesArray = zipCodes.split(",");
+      query.zip_code = { $in: zipCodesArray };
     }
 
-    // Filter by categories if provided
     if (categories) {
       const categoryArray = categories.split(",");
       const validCategories = ToyListing.schema.path("category").enumValues;
@@ -90,7 +89,6 @@ exports.getAllToyListings = async (req, res) => {
         (cat) => !validCategories.includes(cat)
       );
 
-      // Validate categories against the schema's enum values
       if (invalidCategories.length > 0) {
         return res.status(400).json({
           message: "Invalid categories: " + invalidCategories.join(", "),
@@ -100,12 +98,16 @@ exports.getAllToyListings = async (req, res) => {
       query.category = { $in: categoryArray };
     }
 
-    // Execute the query with any specified filters
+    // Adding search functionality
+    if (search && search.trim() !== "") {
+      // Ensure your MongoDB collection has a text index on fields you want to search
+      query.$text = { $search: search };
+    }
+
     const listings = await ToyListing.find(query)
       .populate(populateOptions)
       .exec();
 
-    // Send the filtered listings as a response
     res.status(200).json(listings);
   } catch (error) {
     console.error("Error fetching toy listings:", error);
