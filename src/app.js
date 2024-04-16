@@ -4,6 +4,7 @@ const cors = require("cors");
 
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const session = require("express-session");
 
 const connectDB = require("./config/db.js");
 require("dotenv").config();
@@ -23,6 +24,8 @@ app.use(cors({ origin: "*" }));
 app.use(express.urlencoded({ extended: true })); //middleware configuration for an Express.js application, specifically for parsing incoming request bodies
 app.use(express.json());
 
+const User = require("../models/User"); // assuming you have this file at the given path
+
 passport.use(
   new GoogleStrategy(
     {
@@ -30,25 +33,62 @@ passport.use(
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: "http://localhost:5173/auth/google/callback",
     },
-    (accessToken, refreshToken, profile, done) => {
-      // Here, you can handle the user's profile information returned by Google
-      // For example, you might find or create a user in your database
-      // For now, we'll just pass the profile to the done callback
-      done(null, profile);
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        const { id, emails, name } = profile;
+        const email = emails[0].value;
+        let user = await User.findOne({ email });
+
+        if (user) {
+          // Update existing user
+          user = await User.findOneAndUpdate(
+            { email },
+            {
+              first_name: name.givenName,
+              last_name: name.familyName,
+              modified_date: new Date(),
+            },
+            { new: true }
+          );
+        } else {
+          // Create a new user
+          user = await User.create({
+            email,
+            first_name: name.givenName,
+            last_name: name.familyName,
+            created_by_id: id,
+            modified_by_id: id,
+          });
+        }
+        return done(null, user);
+      } catch (error) {
+        return done(error);
+      }
     }
   )
 );
 
-// Serialize and deserialize user (required for session handling)
-passport.serializeUser((user, done) => {
-  done(null, user);
-});
-
-passport.deserializeUser((user, done) => {
-  done(null, user);
-});
+app.use(
+  session({
+    secret: "your-secret",
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: true }, // Set secure to true if using https
+  })
+);
 
 app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser((id, done) => {
+  User.findById(id, (err, user) => {
+    done(err, user);
+  });
+});
 
 // Route to start the OAuth flow
 app.get(
