@@ -20,6 +20,7 @@ Route:
     GET: ability to pass filter
     DELETE
 */
+// src/models/ToyListing.js
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
@@ -27,10 +28,12 @@ const toyListingSchema = new Schema({
   title: {
     type: String,
     required: [true, "Title is required"],
+    index: "text",
   },
   description: {
     type: String,
     required: [true, "Description is required"],
+    index: "text",
   },
   status: {
     type: String,
@@ -40,19 +43,25 @@ const toyListingSchema = new Schema({
   category: {
     type: String,
     enum: [
-      "Action Figures",
-      "Board Games",
-      "Building Blocks",
-      "Card Games",
+      "Arts & Crafts",
+      "Books",
       "Cars",
       "Dolls",
+      "Clothes",
       "Plush",
+      "Sports",
       "Playsets",
-      "Sports Toys",
-      "Art & Craft",
-      "Games & Puzzles",
-      "Books",
+      "Health",
+      "Educational Toys",
+      "Outdoor Play",
+      "Games",
+      "Puzzles",
+      "Electronic Toys",
+      "Action Figures",
+      "Building Blocks",
       "Musical instruments",
+      "Baby and Toddler Toys",
+      "Costumes and Pretend Play",
       "Miscellaneous",
     ],
     required: [true, "category is required"],
@@ -60,6 +69,7 @@ const toyListingSchema = new Schema({
   zip_code: {
     type: String,
     required: [true, "Zip code is required"],
+    index: true,
   },
   delivery_method: {
     type: String,
