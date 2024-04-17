@@ -1,5 +1,6 @@
 const multer = require("multer");
 const path = require("path");
+require("dotenv").config();
 
 // Setup for multer to handle file uploads
 const storage = multer.diskStorage({
@@ -21,6 +22,7 @@ const upload = multer({ storage: storage });
 exports.uploadSingleImage = upload.single("image");
 
 // Function to handle the response after uploading an image
+
 exports.uploadImage = (req, res) => {
   if (!req.file) {
     return res.status(400).json({
@@ -30,6 +32,9 @@ exports.uploadImage = (req, res) => {
   }
 
   const file = req.file;
+  const baseUrl = process.env.IMAGE_UPLOAD_BASE_URL;
+  const fileUrl = `${baseUrl}${file.filename}`; // Construct the full URL dynamically
+
   res.status(201).json({
     success: true,
     message: "Image uploaded successfully.",
@@ -37,7 +42,7 @@ exports.uploadImage = (req, res) => {
       name: file.filename,
       size: file.size,
       type: file.mimetype,
-      url: `http://localhost:8000/api/v1/images/upload/${file.filename}`,
+      url: fileUrl,
     },
   });
 };
