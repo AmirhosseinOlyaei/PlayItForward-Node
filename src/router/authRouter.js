@@ -1,15 +1,25 @@
-const express = require("express");
-const router = express.Router();
-const authController = require("../controllers/authController");
+const router = require("express").Router();
+const passport = require("passport");
 
-// Route to start the OAuth flow
-router.get("/google", authController.googleAuth);
+//auth logout
+router.get("/logout", (req, res) => {
+  //handle with passport
+  res.send("logging out");
+});
 
-// Callback route that Google will redirect to after a successful login
+// auth google by activating google strategy
 router.get(
-  "/google/callback",
-  authController.googleAuthCallback,
-  authController.redirectAfterAuth
+  "/google",
+  (req, res, next) => {
+    console.log("Attempting to authenticate with Google.");
+    next();
+  },
+  passport.authenticate("google", { scope: ["profile"] })
 );
+
+// callback route that Google will redirect to after a successful login
+router.get("google/callback", passport.authenticate("google"), (req, res) => {
+  res.send("you reached the callback URI");
+});
 
 module.exports = router;
