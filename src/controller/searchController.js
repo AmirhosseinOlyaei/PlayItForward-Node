@@ -30,7 +30,7 @@
 //   }
 // };
 
-const User = require("../../models/User.js");
+const User = require("../../models/user");
 const ToyListing = require("../../models/ToyListing.js");
 
 exports.searchFields = async (req, res) => {

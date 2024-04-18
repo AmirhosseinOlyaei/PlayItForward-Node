@@ -1,5 +1,5 @@
 const Message = require("../../models/message.js");
-const User = require("../../models/User.js");
+const User = require("../../models/user");
 const ToyListing = require("../../models/ToyListing.js");
 
 // Function to create a message and include user and toy listing information

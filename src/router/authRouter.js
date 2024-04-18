@@ -10,15 +10,13 @@ router.get("/logout", (req, res) => {
 // auth google by activating google strategy
 router.get(
   "/google",
-  (req, res, next) => {
-    console.log("Attempting to authenticate with Google.");
-    next();
-  },
-  passport.authenticate("google", { scope: ["profile"] })
+  passport.authenticate("google", {
+    scope: ["profile"],
+  })
 );
 
 // callback route that Google will redirect to after a successful login
-router.get("google/callback", passport.authenticate("google"), (req, res) => {
+router.get("/google/callback", passport.authenticate("google"), (req, res) => {
   res.send("you reached the callback URI");
 });
 

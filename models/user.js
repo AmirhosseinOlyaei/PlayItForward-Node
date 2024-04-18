@@ -20,6 +20,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
+  googleId: String,
   email: {
     type: String,
     required: [true, "Email is required"],

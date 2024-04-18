@@ -1,5 +1,5 @@
 const RequestToy = require("../../models/RequestToy.js");
-const User = require("../../models/User.js");
+const User = require("../../models/user");
 const ToyListing = require("../../models/ToyListing.js");
 
 // Function to create a new request
