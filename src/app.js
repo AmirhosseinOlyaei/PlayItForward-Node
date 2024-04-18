@@ -9,7 +9,6 @@ app.use(express.urlencoded({ extended: true }));
 //initializing passport
 const passport = require("passport");
 const session = require("express-session");
-require("./config/passport-setup.js");
 
 const cors = require("cors");
 const connectDB = require("./config/db.js");
@@ -32,6 +31,7 @@ const imageRouter = require("./router/imageRouter.js"); // imports imageRouter
 app.use(cors({ origin: "*" }));
 
 // middleware: use routers
+require("./config/passport-setup.js");
 app.use("/api/v1", mainRouter);
 app.use("/api/v1/auth", authRouter);
 app.use(
