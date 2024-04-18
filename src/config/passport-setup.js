@@ -16,9 +16,9 @@ passport.use(
       console.log(profile);
       new User({
         googleId: profile.id,
-        username: profile.displayName,
+        nickname: profile.displayName,
       })
-        .save()
+        .save() //saves the new user to the database
         .then((newUser) => {
           console.log("new user created: ", newUser);
         });
