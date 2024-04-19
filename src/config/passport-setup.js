@@ -1,7 +1,8 @@
 require("dotenv").config();
+const User = require("../../models/user");
+
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const User = require("../../models/user");
 
 passport.use(
   new GoogleStrategy(
@@ -26,7 +27,7 @@ passport.use(
           console.log("new user using profile: ", profile);
           new User({
             googleId: profile.id,
-            email: profile.emails[0].value,
+            email: "betiel.ab@gmail.com",
             first_name: profile.name.givenName,
             last_name: profile.name.familyName,
             nickname: profile.displayName,
