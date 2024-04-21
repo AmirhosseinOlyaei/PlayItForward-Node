@@ -15,6 +15,7 @@
 
 // module.exports = router;
 
+// src/router/imageRouter.js
 const express = require("express");
 const router = express.Router();
 const imageController = require("../controller/imageController");
