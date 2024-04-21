@@ -62,24 +62,37 @@
 //   });
 // };
 
-// src/controller/imageController.js
 const multer = require("multer");
 const { Storage } = require("@google-cloud/storage");
 require("dotenv").config();
 const path = require("path");
 
-// Set up Google Cloud Storage
-const storage = new Storage({
-  credentials: JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON),
-});
-const bucket = storage.bucket(process.env.BUCKET_NAME);
+let storage, bucket;
+
+// Check if environment variables are set before using them
+if (
+  process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON &&
+  process.env.BUCKET_NAME
+) {
+  // Initialize Google Cloud Storage with credentials
+  const credentials = JSON.parse(
+    process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON
+  );
+  storage = new Storage({ credentials });
+  bucket = storage.bucket(process.env.BUCKET_NAME);
+} else {
+  console.error(
+    "Environment variables for Google Cloud credentials or bucket name are not set."
+  );
+  // Consider what your application should do in this error scenario.
+  // Maybe throw an error or handle it so that the application can still run in some capacity.
+}
 
 // Multer configuration for handling memory storage
 const multerStorage = multer.memoryStorage();
 
 // Initialize multer with memory storage
 const upload = multer({ storage: multerStorage });
-
 exports.uploadSingleImage = upload.single("image");
 
 // Function to handle the response after uploading an image
@@ -88,6 +101,13 @@ exports.uploadImage = async (req, res) => {
     return res.status(400).json({
       success: false,
       message: "No file uploaded.",
+    });
+  }
+
+  if (!bucket) {
+    return res.status(500).json({
+      success: false,
+      message: "Storage bucket is not configured.",
     });
   }
 
@@ -133,6 +153,13 @@ exports.uploadImage = async (req, res) => {
 
 // Function to retrieve an image
 exports.getImage = (req, res) => {
+  if (!bucket) {
+    return res.status(500).json({
+      success: false,
+      message: "Storage bucket is not configured.",
+    });
+  }
+
   const filename = req.params.filename;
   const file = bucket.file(filename);
 
