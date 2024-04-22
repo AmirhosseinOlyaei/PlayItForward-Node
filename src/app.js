@@ -17,9 +17,9 @@ app.use(
     secret: process.env.SESSION_KEY,
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }), // Update with your MongoDB connection string
+    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
     cookie: {
-      secure: process.env.NODE_ENV === "production",
+      secure: false,
       maxAge: 24 * 60 * 60 * 1000,
     }, // secure cookies in production
   })
