@@ -3,11 +3,23 @@ const app = express();
 
 const passport = require("passport");
 const session = require("express-session");
+const cookieSession = require("cookie-session");
+
 const cors = require("cors");
 const connectDB = require("./config/db.js");
 
 require("dotenv").config();
-require("./config/passport-setup.js"); // It's good to configure Passport before using it
+require("./config/passport-setup.js");
+
+// Enabling secure cookies
+app.use(
+  session({
+    secret: process.env.SESSION_KEY,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: true, maxAge: 24 * 60 * 60 * 1000 },
+  })
+);
 
 // Middleware to handle data parsing
 app.use(express.json());
@@ -15,19 +27,6 @@ app.use(express.urlencoded({ extended: true }));
 
 // CORS
 app.use(cors({ origin: "*" }));
-
-// Session configuration
-app.use(
-  session({
-    secret: "keyboard cat", // Use a more secure secret in production
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-      secure: true, // In production, ensure you are using HTTPS
-      maxAge: 1000 * 60 * 60 * 24, // Cookie expires after 24 hours
-    },
-  })
-);
 
 // Initialize Passport and sessions for Passport
 app.use(passport.initialize());
