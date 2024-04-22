@@ -3,9 +3,10 @@ const passport = require("passport");
 
 //auth logout
 router.get("/logout", (req, res) => {
-  //handle with passport
   req.logOut();
-  res.redirect("/");
+  req.session.destroy(() => {
+    res.redirect("/");
+  });
 });
 
 // auth google by activating google strategy
