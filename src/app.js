@@ -1,115 +1,56 @@
 const express = require("express");
 const app = express();
-const cors = require("cors");
+const MongoStore = require("connect-mongo");
 
 const passport = require("passport");
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const session = require("express-session");
 
+const cors = require("cors");
 const connectDB = require("./config/db.js");
+
 require("dotenv").config();
+require("./config/passport-setup.js");
 
-// importing routers
-const mainRouter = require("./router/mainRouter.js"); // imports mainRouter
-
-const userRouter = require("./router/userRouter.js"); // imports userRouter
-const toyListingRouter = require("./router/toyListingRouter.js"); // imports toyListingRouter
-const starSystemRouter = require("./router/starSystemRouter.js"); // imports starSystemRouter
-const requestToyRouter = require("./router/requestToyRouter.js"); // imports requestToyRouter
-const messageRouter = require("./router/messageRouter.js"); // imports messageRouter
-const favoriteToyRouter = require("./router/favoriteToyRouter.js"); // imports favoriteToyRouter
-const searchRouter = require("./router/searchRouter.js"); // imports searchRouter
-const imageRouter = require("./router/imageRouter.js"); // imports imageRouter
-
-app.use(cors({ origin: "*" }));
-app.use(express.urlencoded({ extended: true })); //middleware configuration for an Express.js application, specifically for parsing incoming request bodies
-app.use(express.json());
-
-const User = require("../models/User"); // assuming you have this file at the given path
-
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.GOOGLE_CALLBACK_URL,
-    },
-    async (accessToken, refreshToken, profile, done) => {
-      try {
-        const { id, emails, name } = profile;
-        const email = emails[0].value;
-        let user = await User.findOne({ email });
-
-        if (user) {
-          // Update existing user
-          user = await User.findOneAndUpdate(
-            { email },
-            {
-              first_name: name.givenName,
-              last_name: name.familyName,
-              modified_date: new Date(),
-            },
-            { new: true }
-          );
-        } else {
-          // Create a new user
-          user = await User.create({
-            email,
-            first_name: name.givenName,
-            last_name: name.familyName,
-            created_by_id: id,
-            modified_by_id: id,
-          });
-        }
-        return done(null, user);
-      } catch (error) {
-        return done(error);
-      }
-    }
-  )
-);
-
+// Enabling secure cookies
 app.use(
   session({
-    secret: "your-secret",
+    secret: process.env.SESSION_KEY,
     resave: false,
-    saveUninitialized: true,
-    cookie: { secure: true }, // Set secure to true if using https
+    saveUninitialized: false,
+    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
+    cookie: {
+      secure: false,
+      maxAge: 24 * 60 * 60 * 1000,
+    }, // secure cookies in production
   })
 );
 
+// Middleware to handle data parsing
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// CORS
+app.use(cors({ origin: "*" }));
+
+// Initialize Passport and sessions for Passport
 app.use(passport.initialize());
 app.use(passport.session());
 
-passport.serializeUser((user, done) => {
-  done(null, user.id);
-});
+// Importing routers
+const mainRouter = require("./router/mainRouter.js");
+const authRouter = require("./router/authRouter.js");
+const userRouter = require("./router/userRouter.js");
+const toyListingRouter = require("./router/toyListingRouter.js");
+const starSystemRouter = require("./router/starSystemRouter.js");
+const requestToyRouter = require("./router/requestToyRouter.js");
+const messageRouter = require("./router/messageRouter.js");
+const favoriteToyRouter = require("./router/favoriteToyRouter.js");
+const searchRouter = require("./router/searchRouter.js");
+const imageRouter = require("./router/imageRouter.js");
 
-passport.deserializeUser((id, done) => {
-  User.findById(id, (err, user) => {
-    done(err, user);
-  });
-});
-
-// Route to start the OAuth flow
-app.get(
-  "/auth/google",
-  passport.authenticate("google", { scope: ["profile"] })
-);
-
-// Callback route that Google will redirect to after a successful login
-app.get(
-  "/auth/google/callback",
-  passport.authenticate("google", { failureRedirect: "/login" }),
-  (req, res) => {
-    // Successful authentication, redirect to your desired page
-    res.redirect("/");
-  }
-);
-
-// middleware: use routers
+// Using routers
 app.use("/api/v1", mainRouter);
-
+app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/toys", toyListingRouter);
 app.use("/api/v1/stars", starSystemRouter);
@@ -119,7 +60,8 @@ app.use("/api/v1/favorites", favoriteToyRouter);
 app.use("/api/v1/search", searchRouter);
 app.use("/api/v1/images", imageRouter);
 
-// connect to mongodb
+// Connect to MongoDB
 connectDB();
-// server
+
+// Server
 module.exports = app;

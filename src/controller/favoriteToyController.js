@@ -1,4 +1,4 @@
-const User = require("../../models/User.js");
+const User = require("../../models/user");
 const ToyListing = require("../../models/ToyListing.js");
 const FavoriteToy = require("../../models/FavoriteToy.js");
 
