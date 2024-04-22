@@ -1,6 +1,5 @@
 require("dotenv").config();
 const User = require("../../models/user");
-
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
@@ -24,38 +23,35 @@ passport.use(
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     },
-    (accessToken, refreshToken, profile, done) => {
-      // passport callback function
-      // console.log("passport callback function fired:");
-      // console.log(profile);
-
-      // check if user already exists in our db
-      User.findOne({ googleId: profile.id }).then((currentUser) => {
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        const currentUser = await User.findOne({ googleId: profile.id });
         if (currentUser) {
-          // we already have a record with the given profile ID
-          console.log("user is: ", currentUser);
+          // Update existing user with new tokens
+          currentUser.accessToken = accessToken;
+          currentUser.refreshToken = refreshToken;
+          await currentUser.save();
+          console.log("Updated user tokens");
           done(null, currentUser);
         } else {
-          // if not, create a new user
-          console.log("new user using profile: ", profile);
-          new User({
+          // Create new user with received profile and tokens
+          const newUser = new User({
             googleId: profile.id,
-            email: "betiell.ab@gmail.com",
+            email: profile.emails[0].value,
             first_name: profile.name.givenName,
             last_name: profile.name.familyName,
             nickname: profile.displayName,
-          })
-            .save() //saves the new user to the database
-            .then((newUser) => {
-              console.log("new user created: ", newUser);
-              done(null, newUser);
-            })
-            .catch((err) => {
-              console.error("error creating new user: ", err);
-              done(err);
-            });
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+          });
+          await newUser.save();
+          console.log("New user created");
+          done(null, newUser);
         }
-      });
+      } catch (err) {
+        console.error("Error processing Google login", err);
+        done(err);
+      }
     }
   )
 );

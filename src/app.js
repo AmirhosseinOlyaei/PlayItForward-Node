@@ -1,9 +1,9 @@
 const express = require("express");
 const app = express();
+const MongoStore = require("connect-mongo");
 
 const passport = require("passport");
 const session = require("express-session");
-const cookieSession = require("cookie-session");
 
 const cors = require("cors");
 const connectDB = require("./config/db.js");
@@ -17,7 +17,11 @@ app.use(
     secret: process.env.SESSION_KEY,
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: true, maxAge: 24 * 60 * 60 * 1000 },
+    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }), // Update with your MongoDB connection string
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 24 * 60 * 60 * 1000,
+    }, // secure cookies in production
   })
 );
 
