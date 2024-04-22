@@ -11,8 +11,16 @@ router.get(
   passport.authenticate("google", { failureRedirect: "/login" }),
   function (req, res) {
     // Successful authentication, redirect home.
+    console.log(req.user);
     res.redirect("/api/v1");
   }
 );
+
+// auth logout
+router.get("/logout", (req, res) => {
+  //handled by passport
+  req.logout();
+  // res.redirect("");
+});
 
 module.exports = router;
