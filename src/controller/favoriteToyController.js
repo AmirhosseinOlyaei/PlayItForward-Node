@@ -6,28 +6,30 @@ exports.addFavoriteToy = async (req, res) => {
   try {
     const { user_id, toy_listing_id } = req.body;
 
-    // Validate that both the user and toy listing exist
-    const userExists = await User.findById(user_id);
-    const toyListingExists = await ToyListing.findById(toy_listing_id);
-    if (!userExists || !toyListingExists) {
-      return res.status(404).json({ message: "User or Toy Listing not found" });
+    // Check if the favorite already exists to avoid duplicates
+    const existingFavorite = await FavoriteToy.findOne({
+      user_id,
+      toy_listing_id,
+    });
+    if (existingFavorite) {
+      return res.status(409).json({ message: "Favorite already exists" });
     }
 
-    // Assuming your schema fields are actually named 'user' and 'toyListing'
+    // Create the new favorite if it doesn't exist
     const newFavoriteToy = await FavoriteToy.create({
       user_id: user_id,
       toy_listing_id: toy_listing_id,
     });
 
-    // Find the newly created document and populate the necessary fields
+    // Optionally, populate details if needed for the response
     const populatedFavoriteToy = await FavoriteToy.findById(newFavoriteToy._id)
       .populate("user_id", "first_name last_name email profile_picture")
       .populate("toy_listing_id", "title description pictures")
-      .exec(); // Use execPopulate since we're calling populate on a document, not a query
+      .exec(); // Use execPopulate if necessary
 
     res.status(201).json(populatedFavoriteToy);
   } catch (error) {
-    console.error(error); // Log the full error to your server's console for debugging
+    console.error(error); // Log the full error
     res.status(400).json({ message: error.message });
   }
 };
@@ -63,15 +65,6 @@ exports.getFavoriteToyByUserId = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-// exports.getFavoriteToysByUserId = async (req, res) => {
-//   const { id } = req.params;
-//   try {
-//     const FavoriteToys = await FavoriteToy.find({ user_id: id });
-//     res.status(200).json(FavoriteToys);
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
 
 // Function to delete a favorite toy
 exports.deleteFavoriteToy = async (req, res) => {
@@ -100,7 +93,9 @@ exports.checkFavorite = async (req, res) => {
     });
 
     if (favorite) {
-      return res.status(200).json({ isFavorite: true });
+      return res
+        .status(200)
+        .json({ isFavorite: true, favorite_Id: favorite._id });
     } else {
       return res.status(200).json({ isFavorite: false });
     }
@@ -110,3 +105,13 @@ exports.checkFavorite = async (req, res) => {
       .json({ message: "Error checking favorite", error: error.message });
   }
 };
+
+// exports.getFavoriteToysByUserId = async (req, res) => {
+//   const { id } = req.params;
+//   try {
+//     const FavoriteToys = await FavoriteToy.find({ user_id: id });
+//     res.status(200).json(FavoriteToys);
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
