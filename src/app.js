@@ -60,6 +60,13 @@ app.use("/api/v1/favorites", favoriteToyRouter);
 app.use("/api/v1/search", searchRouter);
 app.use("/api/v1/images", imageRouter);
 
+app.use("/api/v1/user", (req, res) => {
+  if (req.isAuthenticated()) {
+    res.send(req.user);
+  } else {
+    res.redirect("/auth/google");
+  }
+});
 // Connect to MongoDB
 connectDB();
 
