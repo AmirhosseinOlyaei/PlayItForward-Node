@@ -48,10 +48,20 @@ app.use(express.urlencoded({ extended: true }));
 // CORS
 app.use(
   cors({
-    origin:
-      process.env.NODE_ENV === "production"
-        ? "https://ffprac-team4-front.onrender.com"
-        : "*",
+    origin: (origin, callback) => {
+      const allowedOrigins = [
+        "https://ffprac-team4-front.onrender.com",
+        "http://localhost:5173",
+      ];
+      if (!origin) return callback(null, true); // Allow requests with no origin (like mobile apps or curl requests)
+      if (allowedOrigins.indexOf(origin) === -1) {
+        var msg =
+          "The CORS policy for this site does not allow access from the specified Origin.";
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
+    credentials: true,
   })
 );
 
