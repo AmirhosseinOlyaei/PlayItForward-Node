@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const router = require("express").Router();
 const MongoStore = require("connect-mongo");
 
 const passport = require("passport");
@@ -64,9 +65,10 @@ app.use("/api/v1/user", (req, res) => {
   if (req.isAuthenticated()) {
     res.send(req.user);
   } else {
-    res.redirect("/auth/google");
+    res.status(401).send("User is not authenticated!");
   }
 });
+
 // Connect to MongoDB
 connectDB();
 
