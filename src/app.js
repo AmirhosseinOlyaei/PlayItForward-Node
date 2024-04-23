@@ -10,6 +10,11 @@ const connectDB = require("./config/db.js");
 
 require("dotenv").config();
 require("./config/passport-setup.js");
+app.use(express.static("public"));
+const morgan = require("morgan");
+app.use(morgan("dev"));
+const helmet = require("helmet");
+app.use(helmet());
 
 // Enabling secure cookies
 app.use(
@@ -19,7 +24,7 @@ app.use(
     saveUninitialized: false,
     store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
     cookie: {
-      secure: false,
+      secure: process.env.NODE_ENV === "production",
       maxAge: 24 * 60 * 60 * 1000,
     }, // secure cookies in production
   })
@@ -30,7 +35,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // CORS
-app.use(cors({ origin: "*" }));
+app.use(
+  cors({
+    origin:
+      process.env.NODE_ENV === "production"
+        ? "https://ffprac-team4-front.onrender.com"
+        : "*",
+  })
+);
 
 // Initialize Passport and sessions for Passport
 app.use(passport.initialize());
