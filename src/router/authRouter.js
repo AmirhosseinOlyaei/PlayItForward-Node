@@ -1,3 +1,4 @@
+require("dotenv").config();
 const router = require("express").Router();
 const passport = require("passport");
 const authController = require("../controller/authController.js");
@@ -20,15 +21,19 @@ router.get(
   function (req, res) {
     // Successful authentication, gets redirected.
     // console.log(req.user);
-    res.redirect("/api/v1/user"); // redirects to API route that sends user data
+    res.redirect(process.env.FRONTEND_URL); // redirects to API route that sends user data
   }
 );
 
-// auth logout
+// auth logoutrouter.get("/logout", (req, res) => {
 router.get("/logout", (req, res) => {
-  //handled with passport
-  req.logout();
-  res.send("You have successfully logged out");
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
+    res.clearCookie("connect.sid", { path: "/" }); // Clear session cookie
+    res.status(200).send("User logged out");
+  });
 });
 
 module.exports = router;
