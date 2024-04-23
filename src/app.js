@@ -10,6 +10,23 @@ const cors = require("cors");
 const connectDB = require("./config/db.js");
 
 require("dotenv").config();
+const allowedOrigins = ["https://ffprac-team4-front.vercel.app"];
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.indexOf(origin) === -1) {
+        const msg = `This site ${origin} is not allowed to access this resource.`;
+        return callback(new Error(msg), false);
+      }
+
+      return callback(null, true);
+    },
+  })
+);
+
 require("./config/passport-setup.js");
 
 // Enabling secure cookies
@@ -31,7 +48,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // CORS
-app.use(cors({ origin: "*" }));
+// app.use(cors({ origin: "*" }));
 
 // Initialize Passport and sessions for Passport
 app.use(passport.initialize());
