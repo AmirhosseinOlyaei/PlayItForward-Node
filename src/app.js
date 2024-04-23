@@ -10,7 +10,15 @@ const connectDB = require("./config/db.js");
 
 require("dotenv").config();
 require("./config/passport-setup.js");
-app.use(express.static("public"));
+app.use(
+  express.static("public", {
+    setHeaders: function (res, path) {
+      if (path.endsWith(".js")) {
+        res.set("Content-Type", "application/javascript");
+      }
+    },
+  })
+);
 const morgan = require("morgan");
 app.use(morgan("dev"));
 const helmet = require("helmet");
