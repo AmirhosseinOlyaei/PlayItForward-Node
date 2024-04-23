@@ -1,7 +1,6 @@
 // src/controller/toyListingController.js
 const ToyListing = require("../../models/ToyListing.js");
-const User = require("../../models/User.js");
-
+const User = require("../../models/user");
 // Function to create a new listing
 exports.createToyListing = async (req, res) => {
   try {
