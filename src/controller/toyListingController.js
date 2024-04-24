@@ -171,6 +171,15 @@ exports.getEnumValues = async (req, res) => {
   }
 };
 
+exports.getToyListingsByUser = async (req, res) => {
+  try {
+    const listings = await ToyListing.find({ listed_by_id: req.params.id });
+    res.status(200).json(listings);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 // Fetch categories
 exports.getCategories = (req, res) => {
   // Assuming categories are fixed, we directly send the enum values
