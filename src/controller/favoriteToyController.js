@@ -34,16 +34,6 @@ exports.addFavoriteToy = async (req, res) => {
   }
 };
 
-// Function to get all favorite toys
-exports.getAllFavoriteToys = async (req, res) => {
-  try {
-    const FavoriteToys = await FavoriteToy.find();
-    res.status(200).json(FavoriteToys);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
 // Function to get a favorite toy by user id
 exports.getFavoriteToyByUserId = async (req, res) => {
   const { id } = req.params;
