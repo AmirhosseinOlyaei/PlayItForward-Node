@@ -24,15 +24,15 @@ const userSchema = new Schema({
   email: {
     type: String,
     required: [true, "Email is required"],
-    // unique: true,
+    unique: true,
   },
   first_name: {
     type: String,
-    // required: [true, "First name is required"],
+    required: [true, "First name is required"],
   },
   last_name: {
     type: String,
-    // required: [true, "Last name is required"],
+    required: [true, "Last name is required"],
   },
   nickname: {
     type: String,
