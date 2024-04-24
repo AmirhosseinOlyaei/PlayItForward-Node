@@ -31,7 +31,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // CORS
-app.use(cors({ origin: "*" }));
+app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
 
 // Initialize Passport and sessions for Passport
 app.use(passport.initialize());
