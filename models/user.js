@@ -39,6 +39,9 @@ const userSchema = new Schema({
     // required: [true, "Nickname is required"],
     unique: true,
   },
+  profile_picture: {
+    type: String,
+  },
   zipCode: {
     type: String,
     // required: [true, "Zipcode is required"],
