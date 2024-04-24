@@ -7,7 +7,7 @@ router.post("/", toyListingController.createToyListing);
 router.get("/", toyListingController.getAllToyListings);
 router.get("/:id", toyListingController.getToyListing);
 router.get("/enums/:fieldName", toyListingController.getEnumValues);
-router.put("/:id", toyListingController.updateToyListing);
-router.delete("/:id", toyListingController.deleteToyListing);
+router.put("/:toyListingId", toyListingController.updateToyListing);
+router.delete("/:toyListingId", toyListingController.deleteToyListing);
 
 module.exports = router;
