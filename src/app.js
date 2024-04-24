@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const router = require("express").Router();
 const MongoStore = require("connect-mongo");
 
 const passport = require("passport");
@@ -30,7 +31,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // CORS
-app.use(cors({ origin: "*" }));
+app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
 
 // Initialize Passport and sessions for Passport
 app.use(passport.initialize());
@@ -59,6 +60,14 @@ app.use("/api/v1/messages", messageRouter);
 app.use("/api/v1/favorites", favoriteToyRouter);
 app.use("/api/v1/search", searchRouter);
 app.use("/api/v1/images", imageRouter);
+
+app.use("/api/v1/user", (req, res) => {
+  if (req.isAuthenticated()) {
+    res.send(req.user);
+  } else {
+    res.status(401).send("User is not authenticated!");
+  }
+});
 
 // Connect to MongoDB
 connectDB();
