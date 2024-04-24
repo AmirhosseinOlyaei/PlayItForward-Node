@@ -4,7 +4,7 @@ const favoriteToyController = require("../controller/favoriteToyController.js");
 
 // Define routes
 router.post("/", favoriteToyController.addFavoriteToy);
-router.get("/:favoriteToyId", favoriteToyController.getFavoriteToyByUserId);
+router.get("/:userId", favoriteToyController.getFavoritesByUser);
 // Route to check if a toy listing is in the user's favorites
 router.get(
   "/check-favorite/:userId/:toyListingId",

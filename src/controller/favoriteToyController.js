@@ -35,24 +35,14 @@ exports.addFavoriteToy = async (req, res) => {
 };
 
 // Function to get a favorite toy by user id
-exports.getFavoriteToyByUserId = async (req, res) => {
-  const { id } = req.params;
+exports.getFavoritesByUser = async (req, res) => {
   try {
-    const favoriteToy = await FavoriteToy.findOne({ user_id: id })
-      .populate({
-        path: "user_id",
-        select: "email first_name last_name nickname profile_picture",
-        model: "User",
-      })
-      .exec();
-    if (!favoriteToy) {
-      return res
-        .status(404)
-        .json({ message: "Favorite Toy not found for the given user" });
-    }
-    res.status(200).json(favoriteToy);
+    const favorites = await FavoriteToy.find({
+      user_id: req.params.userId,
+    }).populate("toy_listing_id");
+    res.status(200).send(favorites);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(404).send(error);
   }
 };
 
