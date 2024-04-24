@@ -83,7 +83,7 @@ const toyListingSchema = new Schema({
   listed_by_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    // required: [true, "Listed by is required"],
+    required: [true, "Listed by is required"],
   },
   given_to_user_id: {
     type: mongoose.Schema.Types.ObjectId,

@@ -171,6 +171,23 @@ exports.getEnumValues = async (req, res) => {
   }
 };
 
+const { ObjectId } = require("mongoose").Types;
+
+exports.getToyListingsByUser = async (req, res) => {
+  const userId = req.params.userId;
+  if (!ObjectId.isValid(userId)) {
+    return res.status(400).send({ message: "Invalid user ID format." });
+  }
+
+  try {
+    const listings = await ToyListing.find({ listed_by_id: userId });
+    res.status(200).send(listings);
+  } catch (error) {
+    console.error("Error fetching listings:", error);
+    res.status(500).send({ message: "Failed to fetch listings", error });
+  }
+};
+
 // Fetch categories
 exports.getCategories = (req, res) => {
   // Assuming categories are fixed, we directly send the enum values
