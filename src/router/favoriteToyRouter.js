@@ -5,13 +5,13 @@ const favoriteToyController = require("../controller/favoriteToyController.js");
 // Define routes
 router.post("/", favoriteToyController.addFavoriteToy);
 router.get("/", favoriteToyController.getAllFavoriteToys);
-router.get("/:id", favoriteToyController.getFavoriteToyByUserId);
+router.get("/:favoriteToyId", favoriteToyController.getFavoriteToyByUserId);
 // Route to check if a toy listing is in the user's favorites
 router.get(
   "/check-favorite/:userId/:toyListingId",
   favoriteToyController.checkFavorite
 );
 
-router.delete("/:id", favoriteToyController.deleteFavoriteToy);
+router.delete("/:favoriteToyId", favoriteToyController.deleteFavoriteToy);
 
 module.exports = router;
