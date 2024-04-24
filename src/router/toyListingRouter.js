@@ -10,6 +10,6 @@ router.put("/:toyListingId", toyListingController.updateToyListing); //update to
 router.delete("/:toyListingId", toyListingController.deleteToyListing); //delete toy listing
 router.get("/enums/:fieldName", toyListingController.getEnumValues); //get enum values
 
-router.get("/user/:userId", toyListingController.getToyListingsByUserId); // GET toy listings by user ID
+router.get("/user/:userId", toyListingController.getToyListingsByUser); // GET toy listings by user ID
 
 module.exports = router;

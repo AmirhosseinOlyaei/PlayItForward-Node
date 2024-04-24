@@ -171,12 +171,20 @@ exports.getEnumValues = async (req, res) => {
   }
 };
 
+const { ObjectId } = require("mongoose").Types;
+
 exports.getToyListingsByUser = async (req, res) => {
+  const userId = req.params.userId;
+  if (!ObjectId.isValid(userId)) {
+    return res.status(400).send({ message: "Invalid user ID format." });
+  }
+
   try {
-    const listings = await ToyListing.find({ listed_by_id: req.params.id });
-    res.status(200).json(listings);
+    const listings = await ToyListing.find({ listed_by_id: userId });
+    res.status(200).send(listings);
   } catch (error) {
-    res.status(400).send(error);
+    console.error("Error fetching listings:", error);
+    res.status(500).send({ message: "Failed to fetch listings", error });
   }
 };
 
