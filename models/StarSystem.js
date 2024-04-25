@@ -36,4 +36,9 @@ const starSystemSchema = new Schema({
   },
 });
 
+starSystemSchema.index(
+  { user_id_given_by: 1, user_id_given_to: 1, toy_listing_id: 1 },
+  { unique: true }
+);
+
 module.exports = mongoose.model("StarSystem", starSystemSchema); // creates User model
