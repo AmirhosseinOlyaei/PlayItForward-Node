@@ -1,14 +1,39 @@
 const StarSystem = require("../../models/StarSystem.js");
 const mongoose = require("mongoose");
 // Function to give stars
-exports.giveStars = async (req, res) => {
+exports.createRating = async (req, res) => {
+  const {
+    user_id_given_by,
+    user_id_given_to,
+    toy_listing_id,
+    number_of_stars,
+  } = req.body;
   try {
-    const giveStars = await StarSystem.create(req.body);
-    res.status(201).json(giveStars);
-  } catch (error) {
-    res.status(400).json({
-      message: error.message,
+    const existingRating = await StarSystem.findOne({
+      user_id_given_by,
+      user_id_given_to,
+      toy_listing_id,
     });
+
+    if (existingRating) {
+      return res
+        .status(400)
+        .send({
+          message: "You have already rated this user for this toy listing.",
+        });
+    }
+
+    const newRating = new StarSystem({
+      user_id_given_by,
+      user_id_given_to,
+      toy_listing_id,
+      number_of_stars,
+    });
+
+    await newRating.save();
+    res.status(201).send(newRating);
+  } catch (error) {
+    res.status(500).send({ message: "Error creating rating", error });
   }
 };
 

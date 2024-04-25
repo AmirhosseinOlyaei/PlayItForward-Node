@@ -25,6 +25,7 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
+        console.log(profile._json.picture);
         const currentUser = await User.findOne({ googleId: profile.id });
         if (currentUser) {
           // Update existing user with new tokens
@@ -41,6 +42,7 @@ passport.use(
             first_name: profile.name.givenName,
             last_name: profile.name.familyName,
             nickname: profile.displayName,
+            profile_picture: profile._json.picture,
             accessToken: accessToken,
             refreshToken: refreshToken,
           });
