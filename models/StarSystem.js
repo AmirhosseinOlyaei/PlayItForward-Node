@@ -21,6 +21,11 @@ const starSystemSchema = new Schema({
     ref: "User",
     required: [true, "User id to is required"],
   },
+  toy_listing_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "ToyListing",
+    required: [true, "Toy listing id is required"],
+  },
   number_of_stars: {
     type: Number,
     required: [true, "Number of stars is required"],
