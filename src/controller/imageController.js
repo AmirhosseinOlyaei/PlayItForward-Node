@@ -82,6 +82,29 @@ const storage = new Storage({
 });
 const bucket = storage.bucket(process.env.BUCKET_NAME);
 
+// exports.uploadImage = async (req, res) => {
+//   if (!req.file) {
+//     return res.status(400).send("No file uploaded.");
+//   }
+
+//   const fileBuffer = req.file.buffer;
+//   const fileStream = new Readable({
+//     read() {},
+//   });
+//   fileStream.push(fileBuffer);
+//   fileStream.push(null); // Signal the end of the stream
+
+//   const destinationPath = req.file.originalname;
+//   const writeStream = bucket.file(destinationPath).createWriteStream({
+//     resumable: false,
+//     // private: true,
+//     contentType: "auto",
+//   });
+
+//   writeStream.on("error", (err) => {
+//     console.error(`Error uploading image: ${err}`);
+//     res.status(500).send("Error uploading image.");
+//   });
 exports.uploadImage = async (req, res) => {
   if (!req.file) {
     return res.status(400).send("No file uploaded.");
@@ -97,7 +120,6 @@ exports.uploadImage = async (req, res) => {
   const destinationPath = req.file.originalname;
   const writeStream = bucket.file(destinationPath).createWriteStream({
     resumable: false,
-    // private: true,
     contentType: "auto",
   });
 
@@ -105,6 +127,18 @@ exports.uploadImage = async (req, res) => {
     console.error(`Error uploading image: ${err}`);
     res.status(500).send("Error uploading image.");
   });
+
+  writeStream.on("finish", () => {
+    // Make the uploaded image publicly accessible
+    bucket.file(destinationPath).makePublic().then(() => {
+      const imageUrl = `https://storage.googleapis.com/${process.env.BUCKET_NAME}/${destinationPath}`;
+      res.status(200).send({ url: imageUrl });
+    });
+  });
+
+  fileStream.pipe(writeStream);
+};
+
 
   writeStream.on("finish", () => {
     // Generate a signed URL for secure access
