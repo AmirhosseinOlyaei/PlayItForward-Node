@@ -28,6 +28,6 @@ router.post(
 );
 
 // Updated route for retrieving an image to reflect that it's getting an image, not uploading
-router.get("/images/:filename", imageController.getImage);
+router.get("/:filename", imageController.getImage);
 
 module.exports = router;

@@ -1,4 +1,5 @@
-// // src/controller/imageController.js
+// src/controller/imageController.js
+// ---local storage---
 // const multer = require("multer");
 // const path = require("path");
 // require("dotenv").config();
@@ -62,120 +63,88 @@
 //   });
 // };
 
-const multer = require("multer");
+//
+//
+//
+//
+//
+//
+//
+// src/controller/imageController.js
+// ---google cloud storage---
 const { Storage } = require("@google-cloud/storage");
 require("dotenv").config();
-const path = require("path");
+const Multer = require("multer");
+const { Readable } = require("stream");
 
-let storage, bucket;
+// Configure multer for in-memory storage of files
+const upload = Multer({
+  storage: Multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 },
+});
+exports.uploadSingleImage = upload.single("file");
 
-// Check if environment variables are set before using them
-if (
-  process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON &&
-  process.env.BUCKET_NAME
-) {
-  // Initialize Google Cloud Storage with credentials
-  const credentials = JSON.parse(
-    process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON
-  );
-  storage = new Storage({ credentials });
-  bucket = storage.bucket(process.env.BUCKET_NAME);
-} else {
-  console.error(
-    "Environment variables for Google Cloud credentials or bucket name are not set."
-  );
-  // Consider what your application should do in this error scenario.
-  // Maybe throw an error or handle it so that the application can still run in some capacity.
-}
+// Initialize the Google Cloud Storage client with credentials from the JSON file
+const storage = new Storage({
+  keyFilename:
+    process.env.GOOGLE_APPLICATION_CREDENTIALS ||
+    "./playitforward-418316-e1fd86d0d14f.json", // Path relative to the root of your Node.js application
+});
+const bucket = storage.bucket(process.env.BUCKET_NAME);
 
-// Multer configuration for handling memory storage
-const multerStorage = multer.memoryStorage();
-
-// Initialize multer with memory storage
-const upload = multer({ storage: multerStorage });
-exports.uploadSingleImage = upload.single("image");
-
-// Function to handle the response after uploading an image
 exports.uploadImage = async (req, res) => {
   if (!req.file) {
-    return res.status(400).json({
-      success: false,
-      message: "No file uploaded.",
-    });
+    return res.status(400).send("No file uploaded.");
   }
 
-  if (!bucket) {
-    return res.status(500).json({
-      success: false,
-      message: "Storage bucket is not configured.",
-    });
-  }
+  const fileBuffer = req.file.buffer;
+  const fileStream = new Readable({
+    read() {},
+  });
+  fileStream.push(fileBuffer);
+  fileStream.push(null); // Signal the end of the stream
 
-  try {
-    const blob = bucket.file(req.file.originalname);
-    const blobStream = blob.createWriteStream({
-      resumable: false,
-      metadata: {
-        contentType: req.file.mimetype,
-      },
-    });
+  const destinationPath = req.file.originalname;
+  const writeStream = bucket.file(destinationPath).createWriteStream({
+    resumable: false,
+    contentType: "auto",
+  });
 
-    blobStream.on("error", (err) => {
-      res.status(500).json({
-        success: false,
-        message: "Failed to upload the image.",
-        error: err.message,
+  writeStream.on("error", (err) => {
+    console.error(`Error uploading image: ${err}`);
+    res.status(500).send("Error uploading image.");
+  });
+
+  writeStream.on("finish", () => {
+    // Make the uploaded image publicly accessible
+    bucket
+      .file(destinationPath)
+      .makePublic()
+      .then(() => {
+        const imageUrl = `https://storage.googleapis.com/${process.env.BUCKET_NAME}/${destinationPath}`;
+        res.status(200).send({ url: imageUrl });
+      })
+      .catch((err) => {
+        console.error(`Error making image public: ${err}`);
+        res.status(500).send("Error making image public.");
       });
-    });
+  });
 
-    blobStream.on("finish", () => {
-      const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
-      res.status(201).json({
-        success: true,
-        message: "Image uploaded successfully.",
-        file: {
-          name: blob.name,
-          size: req.file.size,
-          type: req.file.mimetype,
-          url: publicUrl,
-        },
-      });
-    });
-
-    blobStream.end(req.file.buffer);
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
+  fileStream.pipe(writeStream);
 };
 
-// Function to retrieve an image
-exports.getImage = (req, res) => {
-  if (!bucket) {
-    return res.status(500).json({
-      success: false,
-      message: "Storage bucket is not configured.",
-    });
-  }
+exports.getImage = async (req, res) => {
+  const { filename } = req.params;
+  const options = {
+    action: "read",
+    expires: Date.now() + 5 * 60 * 1000, // URL expires in 5 minutes
+  };
 
-  const filename = req.params.filename;
-  const file = bucket.file(filename);
-
-  file
-    .getSignedUrl({
-      action: "read",
-      expires: "03-09-2491",
-    })
-    .then((signedUrls) => {
-      res.redirect(signedUrls[0]); // This will redirect to the URL for the image.
-    })
-    .catch((err) => {
-      res.status(404).json({
-        success: false,
-        message: "Image not found.",
-        error: err.message,
-      });
-    });
+  bucket.file(filename).getSignedUrl(options, (err, url) => {
+    if (err) {
+      console.error(`Error retrieving file: ${err}`);
+      return res.status(500).send("Error retrieving file.");
+    }
+    res.redirect(url); // Redirect to the signed URL
+  });
 };

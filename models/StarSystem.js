@@ -21,6 +21,11 @@ const starSystemSchema = new Schema({
     ref: "User",
     required: [true, "User id to is required"],
   },
+  toy_listing_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "ToyListing",
+    required: [true, "Toy listing id is required"],
+  },
   number_of_stars: {
     type: Number,
     required: [true, "Number of stars is required"],
@@ -30,5 +35,10 @@ const starSystemSchema = new Schema({
     default: Date.now,
   },
 });
+
+starSystemSchema.index(
+  { user_id_given_by: 1, user_id_given_to: 1, toy_listing_id: 1 },
+  { unique: true }
+);
 
 module.exports = mongoose.model("StarSystem", starSystemSchema); // creates User model

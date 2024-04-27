@@ -1,3 +1,4 @@
+require("dotenv").config();
 const router = require("express").Router();
 const passport = require("passport");
 const authController = require("../controller/authController.js");
@@ -10,30 +11,29 @@ function checkIfUserIsAuthenticated(req, res, next) {
   res.status(401).send("User is not authenticated!");
 }
 
-// auth google by activating google strategy
+// this route initiates the authentication process with Google
 router.get("/google", authController.authenticateGoogle);
 
-// callback route that Google will redirect to after a successful login
+// after google authenticates the user, they are redirected to this route
 router.get(
   "/google/callback",
   passport.authenticate("google", { failureRedirect: "/login" }),
   function (req, res) {
     // Successful authentication, gets redirected.
-    console.log(req.user);
-    res.redirect("/api/v1/users");
+    // console.log(req.user);
+    res.redirect(process.env.FRONTEND_URL); // redirects to API route that sends user data
   }
 );
 
-// Route for getting user information, once they are authenticated
-router.get("/user", checkIfUserIsAuthenticated, (req, res) => {
-  res.send(req.user);
-});
-
-// auth logout
+// auth logoutrouter.get("/logout", (req, res) => {
 router.get("/logout", (req, res) => {
-  //handled with passport
-  req.logout();
-  res.send("You have successfully logged out");
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
+    res.clearCookie("connect.sid", { path: "/" }); // Clear session cookie
+    res.status(200).send("User logged out");
+  });
 });
 
 module.exports = router;
