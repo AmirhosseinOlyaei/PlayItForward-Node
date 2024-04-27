@@ -63,6 +63,13 @@
 //   });
 // };
 
+//
+//
+//
+//
+//
+//
+//
 // src/controller/imageController.js
 // ---google cloud storage---
 const { Storage } = require("@google-cloud/storage");
@@ -82,29 +89,6 @@ const storage = new Storage({
 });
 const bucket = storage.bucket(process.env.BUCKET_NAME);
 
-// exports.uploadImage = async (req, res) => {
-//   if (!req.file) {
-//     return res.status(400).send("No file uploaded.");
-//   }
-
-//   const fileBuffer = req.file.buffer;
-//   const fileStream = new Readable({
-//     read() {},
-//   });
-//   fileStream.push(fileBuffer);
-//   fileStream.push(null); // Signal the end of the stream
-
-//   const destinationPath = req.file.originalname;
-//   const writeStream = bucket.file(destinationPath).createWriteStream({
-//     resumable: false,
-//     // private: true,
-//     contentType: "auto",
-//   });
-
-//   writeStream.on("error", (err) => {
-//     console.error(`Error uploading image: ${err}`);
-//     res.status(500).send("Error uploading image.");
-//   });
 exports.uploadImage = async (req, res) => {
   if (!req.file) {
     return res.status(400).send("No file uploaded.");
@@ -130,31 +114,17 @@ exports.uploadImage = async (req, res) => {
 
   writeStream.on("finish", () => {
     // Make the uploaded image publicly accessible
-    bucket.file(destinationPath).makePublic().then(() => {
-      const imageUrl = `https://storage.googleapis.com/${process.env.BUCKET_NAME}/${destinationPath}`;
-      res.status(200).send({ url: imageUrl });
-    });
-  });
-
-  fileStream.pipe(writeStream);
-};
-
-
-  writeStream.on("finish", () => {
-    // Generate a signed URL for secure access
-    const options = {
-      version: "v4",
-      action: "read",
-      expires: Date.now() + 15 * 60 * 1000, // 15 minutes
-    };
-
-    bucket.file(destinationPath).getSignedUrl(options, (err, url) => {
-      if (err) {
-        console.error(`Error generating signed URL: ${err}`);
-        return res.status(500).send("Error generating signed URL.");
-      }
-      res.status(200).send({ url }); // Send the signed URL as a response
-    });
+    bucket
+      .file(destinationPath)
+      .makePublic()
+      .then(() => {
+        const imageUrl = `https://storage.googleapis.com/${process.env.BUCKET_NAME}/${destinationPath}`;
+        res.status(200).send({ url: imageUrl });
+      })
+      .catch((err) => {
+        console.error(`Error making image public: ${err}`);
+        res.status(500).send("Error making image public.");
+      });
   });
 
   fileStream.pipe(writeStream);
