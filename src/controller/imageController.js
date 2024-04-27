@@ -80,12 +80,15 @@ const { Readable } = require("stream");
 // Configure multer for in-memory storage of files
 const upload = Multer({
   storage: Multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 },
 });
 exports.uploadSingleImage = upload.single("file");
 
 // Initialize the Google Cloud Storage client with credentials from the JSON file
 const storage = new Storage({
-  keyFilename: "./playitforward-418316-e1fd86d0d14f.json", // Path relative to the root of your Node.js application
+  keyFilename:
+    process.env.GOOGLE_APPLICATION_CREDENTIALS ||
+    "./playitforward-418316-e1fd86d0d14f.json", // Path relative to the root of your Node.js application
 });
 const bucket = storage.bucket(process.env.BUCKET_NAME);
 
