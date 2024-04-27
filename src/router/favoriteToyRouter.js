@@ -11,6 +11,6 @@ router.get(
   favoriteToyController.checkFavorite
 );
 
-router.delete("/:favoriteToyId", favoriteToyController.deleteFavoriteToy);
+router.delete("/:id", favoriteToyController.deleteFavoriteToy);
 
 module.exports = router;
