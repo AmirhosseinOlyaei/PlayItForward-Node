@@ -63,6 +63,13 @@
 //   });
 // };
 
+//
+//
+//
+//
+//
+//
+//
 // src/controller/imageController.js
 // ---google cloud storage---
 const { Storage } = require("@google-cloud/storage");
@@ -73,12 +80,15 @@ const { Readable } = require("stream");
 // Configure multer for in-memory storage of files
 const upload = Multer({
   storage: Multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 },
 });
 exports.uploadSingleImage = upload.single("file");
 
 // Initialize the Google Cloud Storage client with credentials from the JSON file
 const storage = new Storage({
-  keyFilename: "./playitforward-418316-e1fd86d0d14f.json", // Path relative to the root of your Node.js application
+  keyFilename:
+    process.env.GOOGLE_APPLICATION_CREDENTIALS ||
+    "./playitforward-418316-e1fd86d0d14f.json", // Path relative to the root of your Node.js application
 });
 const bucket = storage.bucket(process.env.BUCKET_NAME);
 
@@ -97,7 +107,6 @@ exports.uploadImage = async (req, res) => {
   const destinationPath = req.file.originalname;
   const writeStream = bucket.file(destinationPath).createWriteStream({
     resumable: false,
-    // private: true,
     contentType: "auto",
   });
 
@@ -107,20 +116,18 @@ exports.uploadImage = async (req, res) => {
   });
 
   writeStream.on("finish", () => {
-    // Generate a signed URL for secure access
-    const options = {
-      version: "v4",
-      action: "read",
-      expires: Date.now() + 15 * 60 * 1000, // 15 minutes
-    };
-
-    bucket.file(destinationPath).getSignedUrl(options, (err, url) => {
-      if (err) {
-        console.error(`Error generating signed URL: ${err}`);
-        return res.status(500).send("Error generating signed URL.");
-      }
-      res.status(200).send({ url }); // Send the signed URL as a response
-    });
+    // Make the uploaded image publicly accessible
+    bucket
+      .file(destinationPath)
+      .makePublic()
+      .then(() => {
+        const imageUrl = `https://storage.googleapis.com/${process.env.BUCKET_NAME}/${destinationPath}`;
+        res.status(200).send({ url: imageUrl });
+      })
+      .catch((err) => {
+        console.error(`Error making image public: ${err}`);
+        res.status(500).send("Error making image public.");
+      });
   });
 
   fileStream.pipe(writeStream);
