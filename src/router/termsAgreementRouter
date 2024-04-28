@@ -1,0 +1,10 @@
+// termsRouter.js
+
+const express = require("express");
+const router = express.Router();
+const termsController = require("../controller/termsController");
+
+// Route for agreeing to terms and conditions
+router.patch("/:id/agreeToTerms", termsController.agreeToTerms);
+
+module.exports = router;
