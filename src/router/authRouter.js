@@ -32,7 +32,8 @@ router.get("/logout", (req, res) => {
       return next(err);
     }
     res.clearCookie("connect.sid", { path: "/" }); // Clear session cookie
-    res.status(200).send("User logged out");
+    // res.status(200).send("User logged out");
+    res.redirect(process.env.FRONTEND_URL); // redirects to API route that sends user data
   });
 });
 
