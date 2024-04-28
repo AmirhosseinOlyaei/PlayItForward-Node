@@ -24,7 +24,8 @@ app.use(
       secureProxy: true,
       secure: app.get("env") === "production", // secure cookies in production
       maxAge: 24 * 60 * 60 * 1000,
-      expires: expiryDate
+      expires: expiryDate,
+      sameSite:"none"
     }, // secure cookies in production
   })
 );
