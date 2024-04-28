@@ -55,6 +55,13 @@ const userSchema = new Schema({
     ref: "User",
     // required: [true, "User id is required"],
   },
+  termsAndConditions: {
+    type: Boolean,
+    default: false,
+  },
+  dateAgreed: {
+    type: Date,
+  },
   created_date: {
     type: Date,
     default: Date.now,
