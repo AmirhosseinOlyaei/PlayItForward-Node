@@ -1,31 +1,41 @@
-// termsController.js
+const User = require("../models/user"); // Adjust the path as needed
 
-const User = require("../../models/user");
-
+// Function to record agreement to the terms
 exports.agreeToTerms = async (req, res) => {
-  const { id } = req.params; // Assuming the user ID is passed as a URL parameter
-  const agreementDate = new Date(); // Current date and time
+  const { userId } = req.params;
 
   try {
-    const user = await User.findByIdAndUpdate(
-      id,
-      {
-        $set: {
-          "termsAgreed.agreed": true,
-          "termsAgreed.dateAgreed": agreementDate,
-        },
-      },
-      { new: true } // Returns the updated document
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { agreedToTerms: true },
+      { new: true }
     );
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res
+      .status(200)
+      .json({
+        message: "Terms agreement updated successfully",
+        user: updatedUser,
+      });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
 
+// Function to check if a user has agreed to the terms
+exports.checkTermsAgreement = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-
-    res.status(200).json({
-      message: "Terms and conditions accepted.",
-      user: user,
-    });
+    res
+      .status(200)
+      .json({ userId: user._id, agreedToTerms: user.agreedToTerms });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

@@ -49,7 +49,7 @@ const messageRouter = require("./router/messageRouter.js");
 const favoriteToyRouter = require("./router/favoriteToyRouter.js");
 const searchRouter = require("./router/searchRouter.js");
 const imageRouter = require("./router/imageRouter.js");
-const termsAgreedRouter = require("./router/termsAgreementRouter.js");
+const termsAgreementRouter = require("./router/termsAgreementRouter.js");
 
 // Using routers
 app.use("/api/v1", mainRouter);
@@ -62,7 +62,7 @@ app.use("/api/v1/messages", messageRouter);
 app.use("/api/v1/favorites", favoriteToyRouter);
 app.use("/api/v1/search", searchRouter);
 app.use("/api/v1/images", imageRouter);
-app.use("/api/v1/terms", termsAgreedRouter);
+app.use("/api/v1/terms", termsAgreementRouter);
 
 app.use("/api/v1/user", (req, res) => {
   if (req.isAuthenticated()) {
