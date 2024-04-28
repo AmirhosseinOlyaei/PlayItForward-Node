@@ -4,13 +4,14 @@ const router = require("express").Router();
 const MongoStore = require("connect-mongo");
 
 const passport = require("passport");
-const session = require("cookie-session");
+const session = require("express-session");
 
 const cors = require("cors");
 const connectDB = require("./config/db.js");
 
 require("dotenv").config();
 require("./config/passport-setup.js");
+var expiryDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
 
 // Enabling secure cookies
 app.use(
@@ -18,11 +19,12 @@ app.use(
     secret: process.env.SESSION_KEY,
     resave: false,
     saveUninitialized: false,
-    // store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
+    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
     cookie: {
       secureProxy: true,
       secure: app.get("env") === "production", // secure cookies in production
       maxAge: 24 * 60 * 60 * 1000,
+      expires: expiryDate
     }, // secure cookies in production
   })
 );
