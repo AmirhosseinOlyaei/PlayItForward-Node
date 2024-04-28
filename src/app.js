@@ -39,7 +39,9 @@ app.use(passport.initialize());
 app.use(passport.session({
   cookie: {
     sameSite: 'none',
-   }
+    secure:true
+   },
+   proxy: true
 }));
 
 // Importing routers
