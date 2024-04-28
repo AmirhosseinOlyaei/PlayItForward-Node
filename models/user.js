@@ -59,6 +59,9 @@ const userSchema = new Schema({
     type: Boolean,
     default: false,
   },
+  dateAgreed: {
+    type: Date,
+  },
   created_date: {
     type: Date,
     default: Date.now,
