@@ -25,6 +25,7 @@ app.use(
       secure: app.get("env") === "production", // secure cookies in production
       maxAge: 24 * 60 * 60 * 1000,
       expires: expiryDate,
+      domain:"ffprac-team4-front.onrender.com"
     }, // secure cookies in production
   })
 );
@@ -76,6 +77,7 @@ app.use("/api/v1/user", (req, res) => {
 
 app.use((req, res, next) => {
   console.log('Session ID:', req.session.id);
+  console.log('Cookies: ', req.cookies)
   next();
 });
 
