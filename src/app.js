@@ -4,7 +4,7 @@ const router = require("express").Router();
 const MongoStore = require("connect-mongo");
 
 const passport = require("passport");
-const session = require("express-session");
+const session = require("cookie-session");
 
 const cors = require("cors");
 const connectDB = require("./config/db.js");
@@ -18,9 +18,9 @@ app.use(
     secret: process.env.SESSION_KEY,
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
+    // store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
     cookie: {
-      // secure: false,
+      secureProxy: true,
       secure: app.get("env") === "production", // secure cookies in production
       maxAge: 24 * 60 * 60 * 1000,
     }, // secure cookies in production
@@ -36,14 +36,7 @@ app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
 app.set("trust proxy", 1);
 // Initialize Passport and sessions for Passport
 app.use(passport.initialize());
-app.use(passport.session({
-  cookie: {
-    sameSite: 'none',
-    secure:true,
-    maxAge: 24*60*60*1000
-   },
-   resave:false
-}));
+app.use(passport.session());
 
 // Importing routers
 const mainRouter = require("./router/mainRouter.js");
