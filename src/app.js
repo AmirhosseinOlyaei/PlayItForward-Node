@@ -75,6 +75,7 @@ app.use("/api/v1/user", (req, res) => {
 });
 
 app.use((req, res, next) => {
+  console.log('req:', req);
   console.log('Session ID:', req.session.id);
   console.log('Cookies: ', req.cookies)
   next();
