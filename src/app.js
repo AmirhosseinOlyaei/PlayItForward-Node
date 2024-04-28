@@ -42,7 +42,7 @@ app.use(passport.session({
     secure:true,
     maxAge: 24*60*60*1000
    },
-   proxy: true
+   resave:false
 }));
 
 // Importing routers
