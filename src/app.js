@@ -33,7 +33,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // CORS
 app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
-
+app.set("trust proxy", 1);
 // Initialize Passport and sessions for Passport
 app.use(passport.initialize());
 app.use(passport.session({
