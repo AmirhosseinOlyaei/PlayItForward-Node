@@ -36,7 +36,11 @@ app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
 
 // Initialize Passport and sessions for Passport
 app.use(passport.initialize());
-app.use(passport.session());
+app.use(passport.session({
+  cookie: {
+    sameSite: 'none',
+   }
+}));
 
 // Importing routers
 const mainRouter = require("./router/mainRouter.js");
