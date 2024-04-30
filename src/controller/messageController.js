@@ -24,7 +24,7 @@ exports.sendMessage = async (req, res) => {
         model: ToyListing,
       })
       .exec();
-
+    console.log(populatedMessage);
     res.status(201).json(populatedMessage);
   } catch (error) {
     res.status(400).json({
@@ -40,12 +40,12 @@ exports.getMessage = async (req, res) => {
     const message = await Message.findById(id)
       .populate({
         path: "user_id_from",
-        select: "email first_name last_name nickname",
+        select: "email first_name last_name nickname profile_picture",
         model: User,
       })
       .populate({
         path: "user_id_to",
-        select: "email first_name last_name nickname",
+        select: "email first_name last_name nickname profile_picture",
         model: User,
       })
       .populate({
@@ -58,6 +58,7 @@ exports.getMessage = async (req, res) => {
     if (!message) {
       return res.status(404).json({ message: "Message not found" });
     }
+    console.log(message);
     res.status(200).json(message);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -70,12 +71,12 @@ exports.getAllMessages = async (req, res) => {
     const allMessages = await Message.find()
       .populate({
         path: "user_id_from",
-        select: "email first_name last_name nickname",
+        select: "email first_name last_name nickname profile_picture",
         model: User,
       })
       .populate({
         path: "user_id_to",
-        select: "email first_name last_name nickname",
+        select: "email first_name last_name nickname profile_picture",
         model: User,
       })
       .populate({
