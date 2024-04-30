@@ -9,6 +9,7 @@ Route:
     CREATE
     GET
 */
+const { profile } = require("console");
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
@@ -22,6 +23,9 @@ const messageSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     //required: [true, "User id to is required"],
+  },
+  profile_picture: {
+    type: String,
   },
   toy_listing_id: {
     type: mongoose.Schema.Types.ObjectId,

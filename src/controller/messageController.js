@@ -5,14 +5,12 @@ const ToyListing = require("../../models/ToyListing.js");
 // Function to create a message and include user and toy listing information
 exports.sendMessage = async (req, res) => {
   try {
-    // Step 1: Create the message with the request body
     const newMessage = await Message.create(req.body);
 
-    // Step 2: Fetch the newly created message with user and toy listing information populated
     const populatedMessage = await Message.findById(newMessage._id)
       .populate({
         path: "user_id_from",
-        select: "email first_name last_name nickname",
+        select: "email first_name last_name nickname profile_picture",
         model: User,
       })
       .populate({
@@ -26,8 +24,7 @@ exports.sendMessage = async (req, res) => {
         model: ToyListing,
       })
       .exec();
-
-    // Step 3: Respond with the populated message
+    console.log(populatedMessage);
     res.status(201).json(populatedMessage);
   } catch (error) {
     res.status(400).json({
@@ -43,12 +40,12 @@ exports.getMessage = async (req, res) => {
     const message = await Message.findById(id)
       .populate({
         path: "user_id_from",
-        select: "email first_name last_name nickname",
+        select: "email first_name last_name nickname profile_picture",
         model: User,
       })
       .populate({
         path: "user_id_to",
-        select: "email first_name last_name nickname",
+        select: "email first_name last_name nickname profile_picture",
         model: User,
       })
       .populate({
@@ -61,6 +58,7 @@ exports.getMessage = async (req, res) => {
     if (!message) {
       return res.status(404).json({ message: "Message not found" });
     }
+    console.log(message);
     res.status(200).json(message);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -73,12 +71,12 @@ exports.getAllMessages = async (req, res) => {
     const allMessages = await Message.find()
       .populate({
         path: "user_id_from",
-        select: "email first_name last_name nickname",
+        select: "email first_name last_name nickname profile_picture",
         model: User,
       })
       .populate({
         path: "user_id_to",
-        select: "email first_name last_name nickname",
+        select: "email first_name last_name nickname profile_picture",
         model: User,
       })
       .populate({
