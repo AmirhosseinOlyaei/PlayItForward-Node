@@ -1,3 +1,4 @@
+// src/router/authRouter.js
 require("dotenv").config();
 const router = require("express").Router();
 const passport = require("passport");
@@ -21,7 +22,7 @@ router.get(
   function (req, res) {
     // Successful authentication, gets redirected.
     // console.log(req.user);
-    res.redirect(process.env.FRONTEND_URL); // redirects to API route that sends user data
+    res.redirect(`${process.env.FRONTEND_URL}/toys`); // redirects to API route that sends user data
   }
 );
 
