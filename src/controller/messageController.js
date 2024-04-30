@@ -5,14 +5,12 @@ const ToyListing = require("../../models/ToyListing.js");
 // Function to create a message and include user and toy listing information
 exports.sendMessage = async (req, res) => {
   try {
-    // Step 1: Create the message with the request body
     const newMessage = await Message.create(req.body);
 
-    // Step 2: Fetch the newly created message with user and toy listing information populated
     const populatedMessage = await Message.findById(newMessage._id)
       .populate({
         path: "user_id_from",
-        select: "email first_name last_name nickname",
+        select: "email first_name last_name nickname profile_picture",
         model: User,
       })
       .populate({
@@ -27,7 +25,6 @@ exports.sendMessage = async (req, res) => {
       })
       .exec();
 
-    // Step 3: Respond with the populated message
     res.status(201).json(populatedMessage);
   } catch (error) {
     res.status(400).json({
