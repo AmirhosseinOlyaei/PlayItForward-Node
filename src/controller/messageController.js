@@ -15,7 +15,7 @@ exports.sendMessage = async (req, res) => {
       })
       .populate({
         path: "user_id_to",
-        select: "email first_name last_name nickname",
+        select: "email first_name last_name nickname profile_picture",
         model: User,
       })
       .populate({
