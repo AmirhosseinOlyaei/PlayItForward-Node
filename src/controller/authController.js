@@ -16,11 +16,22 @@ exports.signup = async (req, res) => {
   try {
     const { email, password, first_name, last_name } = req.body;
 
+    // Check if the user already exists with this email
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ message: "Email already in use" });
+      if (existingUser.googleId) {
+        // If the user has a Google ID, prevent signup with email and password
+        return res.status(400).json({
+          message:
+            "You have previously signed in using Google. Please use Google login to sign in.",
+        });
+      } else {
+        // If the email is already in use with a regular account
+        return res.status(400).json({ message: "Email already in use" });
+      }
     }
 
+    // Create new user with email and password
     const user = new User({ email, password, first_name, last_name });
     await user.save();
 
