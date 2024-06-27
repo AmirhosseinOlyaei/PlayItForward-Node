@@ -2,17 +2,16 @@
 const express = require("express");
 const app = express();
 const router = require("express").Router();
-const MongoStore = require("connect-mongo");
-
-const passport = require("passport");
 const session = require("express-session");
-
+const MongoStore = require("connect-mongo");
+const passport = require("passport");
 const cors = require("cors");
 const connectDB = require("./config/db.js");
 
 require("dotenv").config();
 require("./config/passport-setup.js");
-var expiryDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+
+const expiryDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
 
 // Enabling secure cookies
 app.use(
@@ -31,21 +30,22 @@ app.use(
   })
 );
 
+// CORS
+app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
+
 // Middleware to handle data parsing
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// CORS
-app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
 app.set("trust proxy", 1);
 // Initialize Passport and sessions for Passport
 app.use(passport.initialize());
 app.use(passport.session());
 
 // Importing routers
-const mainRouter = require("./router/mainRouter.js");
 const authRouter = require("./router/authRouter.js");
 const userRouter = require("./router/userRouter.js");
+const mainRouter = require("./router/mainRouter.js");
 const toyListingRouter = require("./router/toyListingRouter.js");
 const starSystemRouter = require("./router/starSystemRouter.js");
 const requestToyRouter = require("./router/requestToyRouter.js");
