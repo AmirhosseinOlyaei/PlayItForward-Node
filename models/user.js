@@ -18,6 +18,7 @@ Route:
 */
 // models/user.js
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
@@ -35,9 +36,12 @@ const userSchema = new Schema({
     type: String,
     required: [true, "Last name is required"],
   },
+  password: {
+    type: String,
+    required: [true, "Password is required"],
+  },
   nickname: {
     type: String,
-    // required: [true, "Nickname is required"],
     unique: true,
   },
   profile_picture: {
@@ -45,7 +49,6 @@ const userSchema = new Schema({
   },
   zipCode: {
     type: String,
-    // required: [true, "Zipcode is required"],
   },
   favoriteToys: {
     type: [mongoose.Schema.Types.ObjectId],
@@ -54,7 +57,6 @@ const userSchema = new Schema({
   created_by_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    // required: [true, "User id is required"],
   },
   termsAndConditions: {
     type: Boolean,
@@ -70,7 +72,6 @@ const userSchema = new Schema({
   modified_by_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    // required: [true, "User id is required"],
   },
   modified_date: {
     type: Date,
@@ -78,4 +79,16 @@ const userSchema = new Schema({
   },
 });
 
-module.exports = mongoose.model("User", userSchema); // creates User model
+// Hash password before saving the user
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
+});
+
+// Validate password
+userSchema.methods.validPassword = async function (password) {
+  return await bcrypt.compare(password, this.password);
+};
+
+module.exports = mongoose.model("User", userSchema);
