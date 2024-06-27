@@ -1,9 +1,9 @@
-// src/controller/authController.js
 const User = require("../../models/user");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const crypto = require("crypto");
+const logger = require("../config/logger");
 
 // Helper function to generate JWT
 const generateToken = (user) => {
@@ -21,12 +21,14 @@ exports.signup = async (req, res) => {
     if (existingUser) {
       if (existingUser.googleId) {
         // If the user has a Google ID, prevent signup with email and password
+        logger.info(`Signup attempt with Google account email: ${email}`);
         return res.status(400).json({
           message:
             "You have previously signed in using Google. Please use Google login to sign in.",
         });
       } else {
         // If the email is already in use with a regular account
+        logger.info(`Email already in use: ${email}`);
         return res.status(400).json({ message: "Email already in use" });
       }
     }
@@ -34,22 +36,32 @@ exports.signup = async (req, res) => {
     // Create new user with email and password
     const user = new User({ email, password, first_name, last_name });
     await user.save();
-
+    logger.info(`User created successfully: ${email}`);
     res.status(201).json({ message: "User created successfully" });
   } catch (error) {
+    logger.error(`Error during signup: ${error.message}`);
     res.status(500).json({ message: error.message });
   }
 };
 
 exports.signin = (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
-    if (err) return next(err);
-    if (!user)
+    if (err) {
+      logger.error(`Error during signin: ${err.message}`);
+      return next(err);
+    }
+    if (!user) {
+      logger.info(`Invalid email or password attempt: ${req.body.email}`);
       return res.status(400).json({ message: "Invalid email or password" });
+    }
 
     req.logIn(user, (err) => {
-      if (err) return next(err);
+      if (err) {
+        logger.error(`Error during login: ${err.message}`);
+        return next(err);
+      }
       const token = generateToken(user);
+      logger.info(`User signed in successfully: ${user.email}`);
       res.json({ token, user });
     });
   })(req, res, next);
@@ -60,6 +72,7 @@ exports.forgotPassword = async (req, res) => {
   try {
     const user = await User.findOne({ email });
     if (!user) {
+      logger.info(`Forgot password attempt for non-existent email: ${email}`);
       return res.status(404).json({ message: "User not found" });
     }
 
@@ -88,9 +101,10 @@ exports.forgotPassword = async (req, res) => {
     };
 
     await transporter.sendMail(mailOptions);
-
+    logger.info(`Password reset link sent to: ${email}`);
     res.json({ message: "Password reset link sent" });
   } catch (error) {
+    logger.error(`Error during forgot password: ${error.message}`);
     res.status(500).json({ message: error.message });
   }
 };
@@ -106,6 +120,7 @@ exports.resetPassword = async (req, res) => {
     });
 
     if (!user) {
+      logger.info(`Invalid or expired password reset token`);
       return res
         .status(400)
         .json({ message: "Password reset token is invalid or has expired" });
@@ -115,9 +130,10 @@ exports.resetPassword = async (req, res) => {
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;
     await user.save();
-
+    logger.info(`Password has been reset for user: ${user.email}`);
     res.json({ message: "Password has been reset" });
   } catch (error) {
+    logger.error(`Error during password reset: ${error.message}`);
     res.status(500).json({ message: error.message });
   }
 };
@@ -127,5 +143,6 @@ exports.authenticateGoogle = passport.authenticate("google", {
 });
 
 exports.googleAuthCallback = (req, res) => {
+  logger.info(`Google auth callback for user: ${req.user.email}`);
   res.send("You have been redirected to the homepage");
 };
