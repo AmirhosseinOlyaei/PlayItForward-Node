@@ -2,7 +2,6 @@
 const User = require("../../models/user");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 
 // Helper function to generate JWT
