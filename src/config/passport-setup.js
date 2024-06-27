@@ -26,14 +26,12 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        console.log(profile._json.picture);
         const currentUser = await User.findOne({ googleId: profile.id });
         if (currentUser) {
           // Update existing user with new tokens
           currentUser.accessToken = accessToken;
           currentUser.refreshToken = refreshToken;
           await currentUser.save();
-          console.log("Updated user tokens");
           done(null, currentUser);
         } else {
           // Create new user with received profile and tokens
@@ -48,11 +46,9 @@ passport.use(
             refreshToken: refreshToken,
           });
           await newUser.save();
-          console.log("New user created");
           done(null, newUser);
         }
       } catch (err) {
-        console.error("Error processing Google login", err);
         done(err);
       }
     }
