@@ -28,6 +28,13 @@ const userSchema = new Schema({
     required: [true, "Email is required"],
     unique: true,
   },
+  password: {
+    type: String,
+    // Make password required only if googleId is not present
+    required: function () {
+      return !this.googleId;
+    },
+  },
   first_name: {
     type: String,
     required: [true, "First name is required"],
@@ -36,20 +43,12 @@ const userSchema = new Schema({
     type: String,
     required: [true, "Last name is required"],
   },
-  password: {
-    type: String,
-    required: [true, "Password is required"],
-  },
   nickname: {
     type: String,
     unique: true,
   },
-  profile_picture: {
-    type: String,
-  },
-  zipCode: {
-    type: String,
-  },
+  profile_picture: String,
+  zipCode: String,
   favoriteToys: {
     type: [mongoose.Schema.Types.ObjectId],
     ref: "ToyListing",
@@ -79,14 +78,15 @@ const userSchema = new Schema({
   },
 });
 
-// Hash password before saving the user
 userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
-  this.password = await bcrypt.hash(this.password, 10);
+  if (!this.isModified("password")) {
+    return next();
+  }
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
   next();
 });
 
-// Validate password
 userSchema.methods.validPassword = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
