@@ -1,3 +1,4 @@
+// src/app.js
 const express = require("express");
 const app = express();
 const router = require("express").Router();
@@ -25,7 +26,7 @@ app.use(
       secure: app.get("env") === "production", // secure cookies in production
       maxAge: 24 * 60 * 60 * 1000,
       expires: expiryDate,
-      sameSite:app.get("env") === "production"?"none":true
+      sameSite: app.get("env") === "production" ? "none" : true,
     }, // secure cookies in production
   })
 );
@@ -76,9 +77,9 @@ app.use("/api/v1/user", (req, res) => {
 });
 
 app.use((req, res, next) => {
-  console.log('req:', req);
-  console.log('Session ID:', req.session.id);
-  console.log('Cookies: ', req.cookies)
+  console.log("req:", req);
+  console.log("Session ID:", req.session.id);
+  console.log("Cookies: ", req.cookies);
   next();
 });
 

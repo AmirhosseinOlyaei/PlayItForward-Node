@@ -1,3 +1,4 @@
+// src/server.js
 const { PORT = 8000 } = process.env;
 const app = require("./app");
 const passport = require("passport");

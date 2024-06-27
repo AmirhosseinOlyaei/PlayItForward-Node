@@ -1,3 +1,4 @@
+// src/controller/authController.js
 const passport = require("passport");
 
 exports.authenticateGoogle = passport.authenticate("google", {

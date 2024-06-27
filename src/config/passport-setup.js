@@ -1,3 +1,4 @@
+// src/config/passport-setup.js
 require("dotenv").config();
 const User = require("../../models/user");
 const passport = require("passport");

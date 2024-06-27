@@ -1,5 +1,4 @@
-// profileRoutes.js
-
+// src/router/profileRouter.js
 const router = require("express").Router();
 const profileController = require("../controller/profileController.js");
 

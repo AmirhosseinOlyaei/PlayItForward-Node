@@ -1,3 +1,4 @@
+// models/user.js
 /*
 User:
     email
@@ -15,7 +16,7 @@ Route:
     UPDATE
     GET: ability to pass filter
 */
-
+// models/user.js
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
