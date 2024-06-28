@@ -32,12 +32,14 @@ exports.signup = async (req, res) => {
       }
     }
 
+    const nickname = `${first_name} ${last_name}`;
     const user = new User({
       email,
       password,
       first_name,
       last_name,
       termsAndConditions,
+      nickname,
     });
     await user.save();
     logger.info(`User created successfully: ${email}`);
