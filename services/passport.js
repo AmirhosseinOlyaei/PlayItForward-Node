@@ -4,12 +4,10 @@ const LocalStrategy = require("passport-local").Strategy;
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const User = require("../models/user");
 
+// Local strategy for username/password authentication
 passport.use(
   new LocalStrategy(
-    {
-      usernameField: "email",
-      passwordField: "password",
-    },
+    { usernameField: "email", passwordField: "password" },
     async (email, password, done) => {
       try {
         const user = await User.findOne({ email });
@@ -28,6 +26,7 @@ passport.use(
   )
 );
 
+// Google strategy for Google OAuth
 passport.use(
   new GoogleStrategy(
     {

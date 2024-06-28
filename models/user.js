@@ -30,7 +30,6 @@ const userSchema = new Schema({
   },
   password: {
     type: String,
-    // Make password required only if googleId is not present
     required: function () {
       return !this.googleId;
     },
