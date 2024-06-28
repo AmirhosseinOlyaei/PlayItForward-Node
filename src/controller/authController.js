@@ -15,27 +15,30 @@ const generateToken = (user) => {
 
 exports.signup = async (req, res) => {
   try {
-    const { email, password, first_name, last_name } = req.body;
+    const { email, password, first_name, last_name, termsAndConditions } =
+      req.body;
 
-    // Check if the user already exists with this email
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       if (existingUser.googleId) {
-        // If the user has a Google ID, prevent signup with email and password
         logger.info(`Signup attempt with Google account email: ${email}`);
         return res.status(400).json({
           message:
             "You have previously signed in using Google. Please use Google login to sign in.",
         });
       } else {
-        // If the email is already in use with a regular account
         logger.info(`Email already in use: ${email}`);
         return res.status(400).json({ message: "Email already in use" });
       }
     }
 
-    // Create new user with email and password
-    const user = new User({ email, password, first_name, last_name });
+    const user = new User({
+      email,
+      password,
+      first_name,
+      last_name,
+      termsAndConditions,
+    });
     await user.save();
     logger.info(`User created successfully: ${email}`);
     res.status(201).json({ message: "User created successfully" });
