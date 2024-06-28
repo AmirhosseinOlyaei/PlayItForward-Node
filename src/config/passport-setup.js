@@ -3,6 +3,7 @@ require("dotenv").config();
 const User = require("../../models/user");
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const LocalStrategy = require("passport-local").Strategy;
 
 passport.serializeUser((user, done) => {
   done(null, user.id);
@@ -17,6 +18,32 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
+// Local Strategy for username and password authentication
+passport.use(
+  new LocalStrategy(
+    {
+      usernameField: "email",
+      passwordField: "password",
+    },
+    async (email, password, done) => {
+      try {
+        const user = await User.findOne({ email });
+        if (!user) {
+          return done(null, false, { message: "Invalid email or password" });
+        }
+        const isMatch = await user.validPassword(password);
+        if (!isMatch) {
+          return done(null, false, { message: "Invalid email or password" });
+        }
+        return done(null, user);
+      } catch (err) {
+        return done(err);
+      }
+    }
+  )
+);
+
+// Google Strategy for Google authentication
 passport.use(
   new GoogleStrategy(
     {
