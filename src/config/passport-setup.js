@@ -43,6 +43,17 @@ passport.use(
   )
 );
 
+// Helper function to generate a unique nickname
+const generateUniqueNickname = async (first_name, last_name) => {
+  let nickname = `${first_name} ${last_name}`;
+  let count = 1;
+  while (await User.findOne({ nickname })) {
+    nickname = `${first_name} ${last_name} ${count}`;
+    count++;
+  }
+  return nickname;
+};
+
 // Google Strategy for Google authentication
 passport.use(
   new GoogleStrategy(
@@ -61,13 +72,18 @@ passport.use(
           await currentUser.save();
           done(null, currentUser);
         } else {
+          // Generate a unique nickname
+          const first_name = profile.name.givenName;
+          const last_name = profile.name.familyName;
+          const nickname = await generateUniqueNickname(first_name, last_name);
+
           // Create new user with received profile and tokens
           const newUser = new User({
             googleId: profile.id,
             email: profile.emails[0].value,
-            first_name: profile.name.givenName,
-            last_name: profile.name.familyName,
-            nickname: profile.displayName,
+            first_name,
+            last_name,
+            nickname,
             profile_picture: profile._json.picture,
             accessToken: accessToken,
             refreshToken: refreshToken,
@@ -81,3 +97,5 @@ passport.use(
     }
   )
 );
+
+module.exports = passport;
