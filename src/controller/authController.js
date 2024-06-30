@@ -13,6 +13,17 @@ const generateToken = (user) => {
   });
 };
 
+// Helper function to generate a unique nickname
+const generateUniqueNickname = async (first_name, last_name) => {
+  let nickname = `${first_name} ${last_name}`;
+  let count = 1;
+  while (await User.findOne({ nickname })) {
+    nickname = `${first_name} ${last_name} ${count}`;
+    count++;
+  }
+  return nickname;
+};
+
 exports.signup = async (req, res) => {
   try {
     const { email, password, first_name, last_name, termsAndConditions } =
@@ -32,7 +43,7 @@ exports.signup = async (req, res) => {
       }
     }
 
-    const nickname = `${first_name} ${last_name}`;
+    const nickname = await generateUniqueNickname(first_name, last_name);
     const user = new User({
       email,
       password,
