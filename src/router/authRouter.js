@@ -4,7 +4,7 @@ const router = require("express").Router();
 const passport = require("passport");
 const authController = require("../controller/authController.js");
 
-// middle ware to ensure that a user is authnicated!
+// Middleware to ensure that a user is authenticated
 function checkIfUserIsAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
@@ -12,29 +12,39 @@ function checkIfUserIsAuthenticated(req, res, next) {
   res.status(401).send("User is not authenticated!");
 }
 
-// this route initiates the authentication process with Google
+// Route to handle user signup
+router.post("/signup", authController.signup);
+
+// Route to handle user signin
+router.post("/signin", authController.signin);
+
+// Route to handle forgot password
+router.post("/forgot-password", authController.forgotPassword);
+
+// Route to handle reset password
+router.post("/reset-password/:token", authController.resetPassword);
+
+// Route to initiate the authentication process with Google
 router.get("/google", authController.authenticateGoogle);
 
-// after google authenticates the user, they are redirected to this route
+// Route to handle Google authentication callback
 router.get(
   "/google/callback",
   passport.authenticate("google", { failureRedirect: "/login" }),
   function (req, res) {
     // Successful authentication, gets redirected.
-    // console.log(req.user);
-    res.redirect(`${process.env.FRONTEND_URL}`); // redirects to API route that sends user data
+    res.redirect(`${process.env.FRONTEND_URL}`);
   }
 );
 
-// auth logoutrouter.get("/logout", (req, res) => {
+// Route to handle user logout
 router.get("/logout", (req, res) => {
   req.logout(function (err) {
     if (err) {
       return next(err);
     }
     res.clearCookie("connect.sid", { path: "/" }); // Clear session cookie
-    // res.status(200).send("User logged out");
-    res.redirect(process.env.FRONTEND_URL); // redirects to API route that sends user data
+    res.redirect(process.env.FRONTEND_URL);
   });
 });
 

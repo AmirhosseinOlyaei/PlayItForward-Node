@@ -1,5 +1,4 @@
-// profileController.js
-
+// src/controller/profileController.js
 exports.authCheck = (req, res, next) => {
   if (!req.user) {
     res.redirect("/auth/login");

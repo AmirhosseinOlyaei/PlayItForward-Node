@@ -1,3 +1,4 @@
+// models/user.js
 /*
 User:
     email
@@ -15,8 +16,9 @@ Route:
     UPDATE
     GET: ability to pass filter
 */
-
+// models/user.js
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
@@ -25,6 +27,12 @@ const userSchema = new Schema({
     type: String,
     required: [true, "Email is required"],
     unique: true,
+  },
+  password: {
+    type: String,
+    required: function () {
+      return !this.googleId;
+    },
   },
   first_name: {
     type: String,
@@ -36,16 +44,10 @@ const userSchema = new Schema({
   },
   nickname: {
     type: String,
-    // required: [true, "Nickname is required"],
     unique: true,
   },
-  profile_picture: {
-    type: String,
-  },
-  zipCode: {
-    type: String,
-    // required: [true, "Zipcode is required"],
-  },
+  profile_picture: String,
+  zipCode: String,
   favoriteToys: {
     type: [mongoose.Schema.Types.ObjectId],
     ref: "ToyListing",
@@ -53,7 +55,6 @@ const userSchema = new Schema({
   created_by_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    // required: [true, "User id is required"],
   },
   termsAndConditions: {
     type: Boolean,
@@ -69,7 +70,6 @@ const userSchema = new Schema({
   modified_by_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    // required: [true, "User id is required"],
   },
   modified_date: {
     type: Date,
@@ -77,4 +77,17 @@ const userSchema = new Schema({
   },
 });
 
-module.exports = mongoose.model("User", userSchema); // creates User model
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
+    return next();
+  }
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
+
+userSchema.methods.validPassword = async function (password) {
+  return await bcrypt.compare(password, this.password);
+};
+
+module.exports = mongoose.model("User", userSchema);

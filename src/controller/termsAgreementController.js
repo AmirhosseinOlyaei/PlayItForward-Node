@@ -1,3 +1,4 @@
+// src/controller/termsAgreementController.js
 const User = require("../../models/user"); // Adjust the path as needed
 
 // Function to record agreement to the terms
