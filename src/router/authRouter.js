@@ -16,7 +16,7 @@ function checkIfUserIsAuthenticated(req, res, next) {
 router.post("/signup", authController.signup);
 
 // Route to handle user signin
-router.post("/signin", authController.signin);
+router.post("/login", authController.signin);
 
 // Route to handle forgot password
 router.post("/forgot-password", authController.forgotPassword);
